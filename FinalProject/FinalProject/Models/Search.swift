@@ -27,10 +27,6 @@ struct Search: Identifiable, Codable {
     // TV-specific
     let name: String?
     
-    var displayName: String {
-        return title ?? name ?? ""
-    }
-    
     var imagePath: String? {
         if mediaType == "person" {
             return profilePath

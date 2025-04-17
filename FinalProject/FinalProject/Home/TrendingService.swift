@@ -8,8 +8,8 @@
 import Foundation
 
 class TrendingService {
-    func getTrending() async throws -> TrendingResponse {
-        guard let url = URL(string: "https://api.themoviedb.org/3/trending/movie/day") else {
+    func getTrending(type: String) async throws -> TrendingResponse {
+        guard let url = URL(string: "https://api.themoviedb.org/3/trending/\(type)/day") else {
             throw URLError(.badURL)
         }
         

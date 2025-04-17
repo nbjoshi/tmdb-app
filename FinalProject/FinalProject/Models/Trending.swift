@@ -18,22 +18,28 @@ struct TrendingResponse: Codable {
 struct Trending: Identifiable, Codable {
     let id: Int
     let mediaType: String
-    let posterPath: String
-
+    let posterPath: String?
+    let profilePath: String?
+    
     // Movie-specific
     let title: String?
 
-    // TV-specific
+    // TV/People-specific
     let name: String?
-    
-    var displayName: String {
-        return title ?? name ?? ""
+        
+    var imagePath: String? {
+        if mediaType == "person" {
+            return profilePath
+        } else {
+            return posterPath
+        }
     }
     
     enum CodingKeys: String, CodingKey {
         case id
         case mediaType = "media_type"
         case posterPath = "poster_path"
+        case profilePath = "profile_path"
         case title
         case name
     }

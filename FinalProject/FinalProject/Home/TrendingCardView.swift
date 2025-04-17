@@ -12,7 +12,7 @@ struct TrendingCardView: View {
 
     var body: some View {
         VStack {
-            AsyncImage(url: URL(string: "https://image.tmdb.org/t/p/w500\(trending.posterPath)")) { phase in
+            AsyncImage(url: URL(string: "https://image.tmdb.org/t/p/w500\(trending.imagePath ?? "")")) { phase in
                 if let image = phase.image {
                     image
                         .resizable()

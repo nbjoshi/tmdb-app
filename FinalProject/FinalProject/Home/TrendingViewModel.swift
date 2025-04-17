@@ -14,13 +14,13 @@ class TrendingViewModel {
     var errorMessage: String? = nil
     private let service = TrendingService()
     
-    func getTrending() async {
+    func getTrending(type: String) async {
         do {
-            let response = try await service.getTrending()
+            let response = try await service.getTrending(type: type)
             trending = response.results
             errorMessage = nil
         } catch {
-            errorMessage = "Failed to fetch trending: \(error)"
+            errorMessage = "Failed to fetch trending \(type): \(error)"
         }
     }
 }
