@@ -2,7 +2,7 @@
 //  TrendingViewModel.swift
 //  FinalProject
 //
-//  Created by Neel Joshi on 4/15/25.
+//  Created by Neel Joshi on 4/17/25.
 //
 
 import Foundation
@@ -10,17 +10,17 @@ import Observation
 
 @Observable
 class TrendingViewModel {
+    var trending: [Trending] = []
+    var errorMessage: String? = nil
     private let service = TrendingService()
-    var trendingMedia: [MediaItem] = []
-    var errorMessage: String?
-
-    func fetchTrendingMedia() async {
+    
+    func getTrending() async {
         do {
-            let response = try await service.getAllTrending()
-            trendingMedia = response.results
+            let response = try await service.getTrending()
+            trending = response.results
             errorMessage = nil
         } catch {
-            errorMessage = "Failed to load trending media: \(error.localizedDescription)"
+            errorMessage = "Failed to fetch trending: \(error)"
         }
     }
 }

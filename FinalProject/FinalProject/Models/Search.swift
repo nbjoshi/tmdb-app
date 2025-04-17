@@ -1,23 +1,26 @@
 //
-//  AllTrending.swift
+//  Search.swift
 //  FinalProject
 //
-//  Created by Neel Joshi on 4/16/25.
+//  Created by Neel Joshi on 4/17/25.
 //
 
-struct AllTrendingResponse: Codable {
-    let results: [AllTrending]
+import Foundation
+
+struct SearchResponse: Codable {
+    let results: [Search]
 
     enum CodingKeys: String, CodingKey {
         case results
     }
 }
 
-struct AllTrending: Identifiable, Codable {
+struct Search: Identifiable, Codable {
     let id: Int
     let mediaType: String
-    let posterPath: String
-
+    let posterPath: String?
+    let profilePath: String?
+    
     // Movie-specific
     let title: String?
 
@@ -28,11 +31,19 @@ struct AllTrending: Identifiable, Codable {
         return title ?? name ?? ""
     }
     
-
+    var imagePath: String? {
+        if mediaType == "person" {
+            return profilePath
+        } else {
+            return posterPath
+        }
+    }
+    
     enum CodingKeys: String, CodingKey {
         case id
         case mediaType = "media_type"
         case posterPath = "poster_path"
+        case profilePath = "profile_path"
         case title
         case name
     }
