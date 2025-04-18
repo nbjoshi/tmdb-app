@@ -9,16 +9,16 @@ import SwiftUI
 
 enum TrendingTab {
     case all
-    case movies
-    case tvshows
+    case movie
+    case tv
     
     var pathValue: String {
         switch self {
         case .all:
             return "all"
-        case .movies:
+        case .movie:
             return "movie"
-        case .tvshows:
+        case .tv:
             return "tv"
         }
     }
@@ -28,6 +28,8 @@ struct TrendingView: View {
     @State private var trendingVM = TrendingViewModel()
     @State private var selectedTab: TrendingTab = .all
     @State private var showingMovieDetailsSheet: Bool = false
+    @State private var selectedMediaId: Int? = nil
+    @State private var selectedMediaType: String? = nil
 
     var body: some View {
         NavigationStack {
@@ -37,21 +39,21 @@ struct TrendingView: View {
                         Text("All")
                             .padding()
                             .background(selectedTab == .all ? Color.white : Color.clear)
-                            .cornerRadius(8)
+                            .cornerRadius(16)
                     }
                     
-                    Button(action: { selectedTab = .movies }) {
+                    Button(action: { selectedTab = .movie }) {
                         Text("Movies")
                             .padding()
-                            .background(selectedTab == .movies ? Color.white : Color.clear)
-                            .cornerRadius(8)
+                            .background(selectedTab == .movie ? Color.white : Color.clear)
+                            .cornerRadius(16)
                     }
                     
-                    Button(action: { selectedTab = .tvshows }) {
+                    Button(action: { selectedTab = .tv }) {
                         Text("TV Shows")
                             .padding()
-                            .background(selectedTab == .tvshows ? Color.white : Color.clear)
-                            .cornerRadius(8)
+                            .background(selectedTab == .tv ? Color.white : Color.clear)
+                            .cornerRadius(16)
                     }
                 }
                 .padding()
@@ -61,6 +63,8 @@ struct TrendingView: View {
                         ForEach(trendingVM.trending) { trending in
                             TrendingCardView(trending: trending)
                                 .onTapGesture {
+                                    selectedMediaId = trending.id
+                                    selectedMediaType = trending.mediaType
                                     showingMovieDetailsSheet = true
                                 }
                         }
@@ -73,13 +77,15 @@ struct TrendingView: View {
             .refreshable {
                 await trendingVM.getTrending(type: selectedTab.pathValue)
             }
-            .onChange(of: selectedTab) {
+            .onChange(of: selectedTab) { oldTab, newTab in
                 Task {
-                    await trendingVM.getTrending(type: selectedTab.pathValue)
+                    await trendingVM.getTrending(type: newTab.pathValue)
                 }
             }
             .sheet(isPresented: $showingMovieDetailsSheet) {
-                CardDetailView(trendingVM: trendingVM)
+                if let id = selectedMediaId, let type = selectedMediaType {
+                    CardDetailView(trendingId: id, mediaType: type)
+                }
             }
         }
     }

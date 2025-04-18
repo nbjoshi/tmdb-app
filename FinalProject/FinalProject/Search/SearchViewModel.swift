@@ -18,7 +18,6 @@ class SearchViewModel {
     
     func getSearch() async {
         if !isQueryValid {
-            errorMessage = "Attempted to search with an empty query."
             return
         }
         
