@@ -18,17 +18,20 @@ struct TrendingCardView: View {
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                         .frame(width: 300, height: 400)
+                        .cornerRadius(12)
                         .clipped()
-                } else if phase.error != nil {
-                    Color.red
-                        .frame(width: 300, height: 400)
                 } else {
                     Color.gray
                         .frame(width: 300, height: 400)
+                        .cornerRadius(12)
                 }
             }
+            Text(trending.displayName ?? "")
+                .bold()
+                .font(.title3)
         }
         .cornerRadius(12)
+        .padding()
     }
 }
 

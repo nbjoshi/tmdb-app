@@ -12,6 +12,7 @@ struct SearchView: View {
     @State private var searchQuery: String = ""
     @State private var hasCancel: Bool = false
     @FocusState private var isTextFieldFocused: Bool
+    @State private var selectedMedia: SelectedMedia? = nil
     
     var body: some View {
         VStack {
@@ -25,7 +26,7 @@ struct SearchView: View {
                         Spacer()
                         Image(systemName: "magnifyingglass")
                             .foregroundStyle(.white)
-                        TextField("Search for Movies, TV Shows, or People", text: $searchQuery)
+                        TextField("Search", text: $searchQuery)
                             .frame(height: 50)
                             .textFieldStyle(.plain)
                             .foregroundStyle(.white)
@@ -71,6 +72,9 @@ struct SearchView: View {
                     
                     ForEach(searchVM.search) { result in
                         SearchCardView(search: result)
+                            .onTapGesture {
+                                selectedMedia = SelectedMedia(id: result.id, mediaType: result.mediaType)
+                            }
                     }
                 }
             }
@@ -78,6 +82,14 @@ struct SearchView: View {
         // Used AI for this!
         .onTapGesture {
             hideKeyboard()
+        }
+        .sheet(item: $selectedMedia) { media in
+            if media.mediaType == "movie" {
+                MovieDetailCard(trendingId: media.id)
+            }
+            else if media.mediaType == "tv" {
+                ShowDetailCard(trendingId: media.id)
+            }
         }
     }
 }

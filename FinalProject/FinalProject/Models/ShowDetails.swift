@@ -32,7 +32,7 @@ struct ShowDetails: Identifiable, Codable {
 }
 
 struct Seasons: Identifiable, Codable {
-    let airDate: String
+    let airDate: String?
     let episodeCount: Int
     let id: Int
     let name: String

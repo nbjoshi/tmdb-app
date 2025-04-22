@@ -35,6 +35,10 @@ struct Trending: Identifiable, Codable {
         }
     }
     
+    var displayName: String? {
+        return title ?? name ?? nil
+    }
+    
     enum CodingKeys: String, CodingKey {
         case id
         case mediaType = "media_type"

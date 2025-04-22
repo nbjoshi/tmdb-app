@@ -13,6 +13,7 @@ class CardDetailViewModel {
     var showDetails: ShowDetails? = nil
     var movieDetails: MovieDetails? = nil
     var errorMessage: String? = nil
+    var similarMovies: [SimilarMovie] = []
     private let service = CardDetailService()
     
     func getMovieDetails(movieId: Int) async {
@@ -32,6 +33,18 @@ class CardDetailViewModel {
             errorMessage = nil
         } catch {
             errorMessage = "Failed to fetch show details: \(error)"
+        }
+    }
+    
+    func getSimilarMovies(movieId: Int) async {
+        print(movieId)
+        do {
+            let response = try await service.getSimilarMovies(movieId: movieId)
+            similarMovies = response.results
+            errorMessage = nil
+        } catch {
+            errorMessage = "Failed to fetch similar movies: \(error)"
+            print(error)
         }
     }
 }

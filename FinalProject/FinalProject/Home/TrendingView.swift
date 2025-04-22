@@ -24,12 +24,15 @@ enum TrendingTab {
     }
 }
 
+struct SelectedMedia: Identifiable {
+    var id: Int
+    var mediaType: String
+}
+
 struct TrendingView: View {
     @State private var trendingVM = TrendingViewModel()
     @State private var selectedTab: TrendingTab = .all
-    @State private var showingMovieDetailsSheet: Bool = false
-    @State private var selectedMediaId: Int? = nil
-    @State private var selectedMediaType: String? = nil
+    @State private var selectedMedia: SelectedMedia? = nil
 
     var body: some View {
         NavigationStack {
@@ -39,33 +42,31 @@ struct TrendingView: View {
                         Text("All")
                             .padding()
                             .background(selectedTab == .all ? Color.white : Color.clear)
-                            .cornerRadius(16)
+                            .cornerRadius(8)
                     }
                     
                     Button(action: { selectedTab = .movie }) {
                         Text("Movies")
                             .padding()
                             .background(selectedTab == .movie ? Color.white : Color.clear)
-                            .cornerRadius(16)
+                            .cornerRadius(8)
                     }
                     
                     Button(action: { selectedTab = .tv }) {
                         Text("TV Shows")
                             .padding()
                             .background(selectedTab == .tv ? Color.white : Color.clear)
-                            .cornerRadius(16)
+                            .cornerRadius(8)
                     }
                 }
-                .padding()
+                .padding(.horizontal)
 
                 ScrollView(.vertical) {
                     LazyVStack {
                         ForEach(trendingVM.trending) { trending in
                             TrendingCardView(trending: trending)
                                 .onTapGesture {
-                                    selectedMediaId = trending.id
-                                    selectedMediaType = trending.mediaType
-                                    showingMovieDetailsSheet = true
+                                    selectedMedia = SelectedMedia(id: trending.id, mediaType: trending.mediaType)
                                 }
                         }
                     }
@@ -82,9 +83,12 @@ struct TrendingView: View {
                     await trendingVM.getTrending(type: newTab.pathValue)
                 }
             }
-            .sheet(isPresented: $showingMovieDetailsSheet) {
-                if let id = selectedMediaId, let type = selectedMediaType {
-                    CardDetailView(trendingId: id, mediaType: type)
+            .sheet(item: $selectedMedia) { media in
+                if media.mediaType == "movie" {
+                    MovieDetailCard(trendingId: media.id)
+                }
+                else if media.mediaType == "tv" {
+                    ShowDetailCard(trendingId: media.id)
                 }
             }
         }
