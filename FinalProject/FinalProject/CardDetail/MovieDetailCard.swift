@@ -37,8 +37,9 @@ struct MovieDetailCard: View {
                             Text(movie.overview)
                                 .font(.body)
                             
-                            Text("\(movie.releaseDate.prefix(4)) · \(movie.genres.map { $0.name }.joined(separator: ", "))")
+                            Text("\(movie.releaseDate.prefix(4)) · \(movie.genres.map { $0.name }.joined(separator: ", ")) · Movie")
                                 .font(.body)
+                                .foregroundColor(.secondary)
                             
                             HStack {
                                 Spacer()
@@ -48,6 +49,7 @@ struct MovieDetailCard: View {
                                     .cornerRadius(16)
                                 Spacer()
                             }
+                            
                             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
                                 ForEach(cardDetailVM.similarMovies) { movie in
                                     VStack {

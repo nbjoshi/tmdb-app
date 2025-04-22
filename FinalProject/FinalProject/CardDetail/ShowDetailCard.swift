@@ -7,10 +7,18 @@
 
 import SwiftUI
 
+enum ShowTab {
+    case episodes
+    case similar
+}
+
 struct ShowDetailCard: View {
     @Environment(\.dismiss) private var dismiss
     let trendingId: Int
     @State private var cardDetailVM = CardDetailViewModel()
+    @State private var selectedMedia: SelectedMedia? = nil
+    @State private var showTab: ShowTab = .episodes
+    @State private var selectedSeason: Season? = nil
     
     var body: some View {
         ZStack(alignment: .topLeading) {
@@ -29,16 +37,123 @@ struct ShowDetailCard: View {
                         }
                         
                         VStack(alignment: .leading, spacing: 16) {
-                            Text(show.tagline)
+                            Text(show.name)
                                 .font(.title)
                                 .bold()
                             
                             Text(show.overview)
                                 .font(.body)
                             
-                            Text("Seasons: \(show.numberOfSeasons), Episodes: \(show.numberOfEpisodes)")
-                                .font(.subheadline)
-                                .foregroundColor(.gray)
+                            Text("\(show.firstAirDate.prefix(4)) · \(show.genres.map { $0.name }.joined(separator: ", ")) · TV Show")
+                                .font(.body)
+                                .foregroundColor(.secondary)
+                            
+                            HStack {
+                                Spacer()
+                                Button(action: { showTab = .episodes }) {
+                                    Text("Episodes")
+                                        .padding()
+                                        .background(showTab == .episodes ? Color.white : Color.clear)
+                                        .cornerRadius(8)
+                                }
+                                Button(action: { showTab = .similar }) {
+                                    Text("You May Also Like")
+                                        .padding()
+                                        .background(showTab == .similar ? Color.white : Color.clear)
+                                        .cornerRadius(8)
+                                }
+                                Spacer()
+                            }
+                            if showTab == .episodes {
+                                Menu {
+                                    ForEach(show.seasons) { season in
+                                        Button(action: {
+                                            selectedSeason = season
+                                            Task {
+                                                await cardDetailVM.getSeasonDetails(showId: show.id, seasonNumber: season.seasonNumber)
+                                            }
+                                        }) {
+                                            Text("Season \(season.seasonNumber) — \(season.episodeCount) Episodes")
+                                        }
+                                    }
+                                } label: {
+                                    HStack {
+                                        if let season = selectedSeason {
+                                            Text("Season \(season.seasonNumber)")
+                                                .font(.body)
+                                        }
+                                        Image(systemName: "chevron.down")
+                                            .font(.body)
+                                    }
+                                    .background(Color.clear)
+                                }
+                                
+                                if let episodes = cardDetailVM.seasonEpisodes {
+                                    LazyVStack(alignment: .leading, spacing: 40) {
+                                        ForEach(episodes) { episode in
+                                            VStack(alignment: .leading, spacing: 20) {
+                                                HStack(alignment: .center, spacing: 12) {
+                                                    if let stillPath = episode.stillPath {
+                                                        AsyncImage(url: URL(string: "https://image.tmdb.org/t/p/w500\(stillPath)")) { image in
+                                                            image
+                                                                .resizable()
+                                                                .aspectRatio(contentMode: .fill)
+                                                                .frame(width: 120, height: 80)
+                                                                .cornerRadius(8)
+                                                        } placeholder: {
+                                                            Color.gray
+                                                                .frame(width: 120, height: 80)
+                                                                .cornerRadius(8)
+                                                        }
+                                                        Text("S\(episode.seasonNumber) E\(episode.episodeNumber) - \(episode.name)")
+                                                            .font(.headline)
+                                                    }
+                                                }
+                                                VStack(alignment: .leading, spacing: 12) {
+                                                    Text(episode.overview)
+                                                        .font(.subheadline)
+                                                        .foregroundColor(.secondary)
+                                                    Text("\(episode.runtime) min · Air Date: \(episode.airDate)")
+                                                        .font(.caption)
+                                                        .foregroundColor(.secondary)
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            
+                            if showTab == .similar {
+                                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
+                                    ForEach(cardDetailVM.similarShows) { similarShow in
+                                        VStack {
+                                            AsyncImage(url: URL(string: "https://image.tmdb.org/t/p/w500\(similarShow.posterPath ?? "")")) { image in
+                                                image
+                                                    .resizable()
+                                                    .aspectRatio(contentMode: .fit)
+                                                    .frame(height: 180)
+                                                    .cornerRadius(12)
+                                                    .clipped()
+                                            } placeholder: {
+                                                Color.gray
+                                                    .frame(height: 180)
+                                                    .cornerRadius(12)
+                                                    .clipped()
+                                            }
+                                            
+                                            Text(similarShow.name)
+                                                .font(.caption)
+                                                .multilineTextAlignment(.center)
+                                                .lineLimit(2)
+                                        }
+                                        .padding()
+                                        .cornerRadius(12)
+                                        .onTapGesture {
+                                            selectedMedia = SelectedMedia(id: similarShow.id, mediaType: "tv")
+                                        }
+                                    }
+                                }
+                            }
                         }
                         .padding()
                         
@@ -62,6 +177,18 @@ struct ShowDetailCard: View {
         .ignoresSafeArea()
         .task {
             await cardDetailVM.getShowDetails(showId: trendingId)
+            await cardDetailVM.getSimilarShows(showId: trendingId)
+            if let firstSeason = cardDetailVM.showDetails?.seasons.first {
+                selectedSeason = firstSeason
+                await cardDetailVM.getSeasonDetails(showId: trendingId, seasonNumber: firstSeason.seasonNumber)
+            }
+        }
+        .sheet(item: $selectedMedia) { media in
+            if media.mediaType == "movie" {
+                MovieDetailCard(trendingId: media.id)
+            } else if media.mediaType == "tv" {
+                ShowDetailCard(trendingId: media.id)
+            }
         }
     }
 }
