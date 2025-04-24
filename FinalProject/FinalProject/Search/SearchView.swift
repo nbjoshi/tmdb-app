@@ -21,15 +21,13 @@ struct SearchView: View {
                     RoundedRectangle(cornerRadius: 12)
                         .frame(height: 40)
                         .cornerRadius(12)
-                        .foregroundStyle(.gray)
+                        .foregroundStyle(.ultraThinMaterial)
                     HStack {
                         Spacer()
                         Image(systemName: "magnifyingglass")
-                            .foregroundStyle(.white)
                         TextField("Search", text: $searchQuery)
                             .frame(height: 50)
                             .textFieldStyle(.plain)
-                            .foregroundStyle(.white)
                             .focused($isTextFieldFocused)
                             .cornerRadius(12)
                             .onChange(of: isTextFieldFocused) { oldValue, newValue in
@@ -56,20 +54,12 @@ struct SearchView: View {
                             .foregroundStyle(Color.red)
                     }
                     .padding(.trailing, 8)
-                    .transition(.move(edge: .trailing))
-                    .animation(.easeInOut(duration: 0.6), value: hasCancel)
                 }
             }
             .padding()
             
             ScrollView(.vertical) {
                 LazyVStack {
-                    if let error = searchVM.errorMessage {
-                        Text(error)
-                            .foregroundStyle(.red)
-                            .padding()
-                    }
-                    
                     ForEach(searchVM.search) { result in
                         SearchCardView(search: result)
                             .onTapGesture {

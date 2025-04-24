@@ -18,14 +18,17 @@ struct SearchCardView: View {
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                         .frame(width: 300, height: 400)
-                        .clipped()
+                        .cornerRadius(12)
                 } else {
                     Color.gray
                         .frame(width: 300, height: 400)
+                        .cornerRadius(12)
                 }
             }
+            Text(search.displayName ?? "")
+                .font(.headline)
         }
-        .cornerRadius(12)
+        .padding()
     }
 }
 

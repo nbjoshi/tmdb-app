@@ -19,7 +19,6 @@ struct TrendingCardView: View {
                         .aspectRatio(contentMode: .fill)
                         .frame(width: 300, height: 400)
                         .cornerRadius(12)
-                        .clipped()
                 } else {
                     Color.gray
                         .frame(width: 300, height: 400)
@@ -27,10 +26,8 @@ struct TrendingCardView: View {
                 }
             }
             Text(trending.displayName ?? "")
-                .bold()
-                .font(.title3)
+                .font(.headline)
         }
-        .cornerRadius(12)
         .padding()
     }
 }

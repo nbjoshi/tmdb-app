@@ -37,29 +37,20 @@ struct TrendingView: View {
     var body: some View {
         NavigationStack {
             VStack {
-                HStack {
+                HStack(spacing: 20) {
                     Button(action: { selectedTab = .all }) {
                         Text("All")
-                            .padding()
-                            .background(selectedTab == .all ? Color.white : Color.clear)
-                            .cornerRadius(8)
+//                            .background(selectedTab == .all ? Color.white : Color.clear)
                     }
-                    
                     Button(action: { selectedTab = .movie }) {
                         Text("Movies")
-                            .padding()
-                            .background(selectedTab == .movie ? Color.white : Color.clear)
-                            .cornerRadius(8)
+//                            .background(selectedTab == .movie ? Color.white : Color.clear)
                     }
-                    
                     Button(action: { selectedTab = .tv }) {
                         Text("TV Shows")
-                            .padding()
-                            .background(selectedTab == .tv ? Color.white : Color.clear)
-                            .cornerRadius(8)
+//                            .background(selectedTab == .tv ? Color.white : Color.clear)
                     }
                 }
-                .padding(.horizontal)
 
                 ScrollView(.vertical) {
                     LazyVStack {

@@ -35,6 +35,14 @@ struct Search: Identifiable, Codable {
         }
     }
     
+    var displayName: String? {
+        if mediaType == "movie" {
+            return title
+        } else {
+            return name
+        }
+    }
+    
     enum CodingKeys: String, CodingKey {
         case id
         case mediaType = "media_type"

@@ -29,11 +29,9 @@ struct ShowDetailCard: View {
                             image
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
-                                .clipped()
                         } placeholder: {
                             Color.gray
                                 .frame(height: 400)
-                                .clipped()
                         }
                         
                         VStack(alignment: .leading, spacing: 16) {
@@ -45,24 +43,18 @@ struct ShowDetailCard: View {
                                 .font(.body)
                             
                             Text("\(show.firstAirDate.prefix(4)) · \(show.genres.map { $0.name }.joined(separator: ", ")) · TV Show")
-                                .font(.body)
+                                .font(.footnote)
                                 .foregroundColor(.secondary)
                             
-                            HStack {
-                                Spacer()
+                            HStack(spacing: 40) {
                                 Button(action: { showTab = .episodes }) {
                                     Text("Episodes")
-                                        .padding()
-                                        .background(showTab == .episodes ? Color.white : Color.clear)
-                                        .cornerRadius(8)
+//                                        .background(showTab == .episodes ? Color.white : Color.clear)
                                 }
                                 Button(action: { showTab = .similar }) {
                                     Text("You May Also Like")
-                                        .padding()
-                                        .background(showTab == .similar ? Color.white : Color.clear)
-                                        .cornerRadius(8)
+//                                        .background(showTab == .similar ? Color.white : Color.clear)
                                 }
-                                Spacer()
                             }
                             if showTab == .episodes {
                                 Menu {
@@ -112,9 +104,8 @@ struct ShowDetailCard: View {
                                                 VStack(alignment: .leading, spacing: 12) {
                                                     Text(episode.overview)
                                                         .font(.subheadline)
-                                                        .foregroundColor(.secondary)
                                                     Text("\(episode.runtime) min · Air Date: \(episode.airDate)")
-                                                        .font(.caption)
+                                                        .font(.footnote)
                                                         .foregroundColor(.secondary)
                                                 }
                                             }
@@ -169,7 +160,7 @@ struct ShowDetailCard: View {
                 dismiss()
             }) {
                 Image(systemName: "xmark")
-                    .font(.callout)
+                    .font(.headline)
                     .foregroundColor(.white)
             }
             .padding()

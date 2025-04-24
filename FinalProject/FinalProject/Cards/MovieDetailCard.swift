@@ -22,11 +22,9 @@ struct MovieDetailCard: View {
                             image
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
-                                .clipped()
                         } placeholder: {
                             Color.gray
                                 .frame(height: 400)
-                                .clipped()
                         }
                         
                         VStack(alignment: .leading, spacing: 16) {
@@ -38,15 +36,12 @@ struct MovieDetailCard: View {
                                 .font(.body)
                             
                             Text("\(movie.releaseDate.prefix(4)) · \(movie.genres.map { $0.name }.joined(separator: ", ")) · Movie")
-                                .font(.body)
+                                .font(.callout)
                                 .foregroundColor(.secondary)
                             
                             HStack {
                                 Spacer()
                                 Button("You May Also Like") {}
-                                    .padding()
-                                    .background(Color.white)
-                                    .cornerRadius(16)
                                 Spacer()
                             }
                             
@@ -59,20 +54,18 @@ struct MovieDetailCard: View {
                                                 .aspectRatio(contentMode: .fit)
                                                 .frame(height: 180)
                                                 .cornerRadius(12)
-                                                .clipped()
                                         } placeholder: {
                                             Color.gray
                                                 .frame(height: 180)
                                                 .cornerRadius(12)
-                                                .clipped()
                                         }
                                         Text(movie.title)
-                                            .font(.caption)
+                                            .font(.callout)
+                                            .fontWeight(.bold)
                                             .multilineTextAlignment(.center)
-                                            .lineLimit(2)
+                                            .lineLimit(1)
                                     }
                                     .padding()
-                                    .cornerRadius(12)
                                     .onTapGesture {
                                         selectedMedia = SelectedMedia(id: movie.id, mediaType: "movie")
                                     }
@@ -80,11 +73,6 @@ struct MovieDetailCard: View {
                             }
                         }
                         .padding()
-                        
-                    } else if let errorMessage = cardDetailVM.errorMessage {
-                        Text(errorMessage)
-                            .foregroundColor(.red)
-                            .padding()
                     }
                 }
             }
@@ -93,7 +81,7 @@ struct MovieDetailCard: View {
                 dismiss()
             }) {
                 Image(systemName: "xmark")
-                    .font(.callout)
+                    .font(.headline)
                     .foregroundColor(.white)
             }
             .padding()
