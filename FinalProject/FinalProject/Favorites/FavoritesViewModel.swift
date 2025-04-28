@@ -45,5 +45,4 @@ class FavoritesViewModel {
             errorMessage = error.localizedDescription
         }
     }
-
 }

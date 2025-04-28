@@ -11,7 +11,7 @@ struct MovieDetailCard: View {
     @Environment(\.dismiss) private var dismiss
     let trendingId: Int
     let sessionId: String
-     let accountId: Int
+    let accountId: Int
     let isLoggedIn: Bool
     @State private var cardDetailVM = CardDetailViewModel()
     @State private var selectedMedia: SelectedMedia? = nil
@@ -81,23 +81,37 @@ struct MovieDetailCard: View {
                             
                             HStack {
                                 Button("You May Also Like") {}
+                                    .fontWeight(.semibold)
+                                    .padding(.vertical, 8)
+                                    .padding(.horizontal, 20)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .fill(Color.accentColor.opacity(0.2))
+                                    )
                             }
                             .padding(.vertical)
                             
                             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
                                 ForEach(cardDetailVM.similarMovies) { movie in
                                     VStack {
-                                        AsyncImage(url: URL(string: "https://image.tmdb.org/t/p/w500\(movie.posterPath ?? "")")) { image in
-                                            image
-                                                .resizable()
-                                                .aspectRatio(contentMode: .fit)
-                                                .frame(height: 180)
-                                                .cornerRadius(12)
-                                        } placeholder: {
+                                        if let posterPath = movie.posterPath {
+                                            AsyncImage(url: URL(string: "https://image.tmdb.org/t/p/w500\(posterPath)")) { image in
+                                                image
+                                                    .resizable()
+                                                    .aspectRatio(contentMode: .fit)
+                                                    .frame(height: 180)
+                                                    .cornerRadius(12)
+                                            } placeholder: {
+                                                Color.gray
+                                                    .frame(height: 180)
+                                                    .cornerRadius(12)
+                                            }
+                                        } else {
                                             Color.gray
                                                 .frame(height: 180)
                                                 .cornerRadius(12)
                                         }
+                                        
                                         Text(movie.title)
                                             .font(.callout)
                                             .fontWeight(.bold)

@@ -90,7 +90,6 @@ class CardDetailViewModel {
     }
     
     func getMovieState(movieId: Int, sessionId: String) async {
-        print("Movie State View Model")
         do {
             let response = try await service.getMovieState(movieId: movieId, sessionId: sessionId)
             isFavorited = response.favorite
@@ -98,5 +97,4 @@ class CardDetailViewModel {
             errorMessage = "Failed to retrieve movie state."
         }
     }
-    
 }

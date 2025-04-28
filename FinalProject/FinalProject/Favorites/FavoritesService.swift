@@ -10,10 +10,10 @@ import Foundation
 class FavoritesService {
     func addToFavorite(mediaType: String, mediaId: Int, accountId: Int, sessionId: String) async throws -> FavoritesResponse {
         let parameters = [
-          "media_type": mediaType,
-          "media_id": mediaId,
-          "favorite": true
-        ] as [String : Any?]
+            "media_type": mediaType,
+            "media_id": mediaId,
+            "favorite": true,
+        ] as [String: Any?]
         
         let postData = try JSONSerialization.data(withJSONObject: parameters, options: [])
 
@@ -31,9 +31,9 @@ class FavoritesService {
         request.httpMethod = "POST"
         request.timeoutInterval = 10
         request.allHTTPHeaderFields = [
-          "accept": "application/json",
-          "content-type": "application/json",
-          "Authorization": "Bearer \(Constants.access_token)"
+            "accept": "application/json",
+            "content-type": "application/json",
+            "Authorization": "Bearer \(Constants.access_token)",
         ]
         request.httpBody = postData
 
@@ -53,9 +53,9 @@ class FavoritesService {
         
         var components = URLComponents(url: url, resolvingAgainstBaseURL: true)!
         let queryItems: [URLQueryItem] = [
-          URLQueryItem(name: "page", value: "1"),
-          URLQueryItem(name: "sort_by", value: "created_at.asc"),
-          URLQueryItem(name: "session_id", value: sessionId),
+            URLQueryItem(name: "page", value: "1"),
+            URLQueryItem(name: "sort_by", value: "created_at.asc"),
+            URLQueryItem(name: "session_id", value: sessionId),
         ]
         components.queryItems = components.queryItems.map { $0 + queryItems } ?? queryItems
 
@@ -63,8 +63,8 @@ class FavoritesService {
         request.httpMethod = "GET"
         request.timeoutInterval = 10
         request.allHTTPHeaderFields = [
-          "accept": "application/json",
-          "Authorization": "Bearer \(Constants.access_token)"
+            "accept": "application/json",
+            "Authorization": "Bearer \(Constants.access_token)",
         ]
 
         do {
@@ -83,9 +83,9 @@ class FavoritesService {
         
         var components = URLComponents(url: url, resolvingAgainstBaseURL: true)!
         let queryItems: [URLQueryItem] = [
-          URLQueryItem(name: "page", value: "1"),
-          URLQueryItem(name: "sort_by", value: "created_at.asc"),
-          URLQueryItem(name: "session_id", value: sessionId),
+            URLQueryItem(name: "page", value: "1"),
+            URLQueryItem(name: "sort_by", value: "created_at.asc"),
+            URLQueryItem(name: "session_id", value: sessionId),
         ]
         components.queryItems = components.queryItems.map { $0 + queryItems } ?? queryItems
 
@@ -93,8 +93,8 @@ class FavoritesService {
         request.httpMethod = "GET"
         request.timeoutInterval = 10
         request.allHTTPHeaderFields = [
-          "accept": "application/json",
-          "Authorization": "Bearer \(Constants.access_token)"
+            "accept": "application/json",
+            "Authorization": "Bearer \(Constants.access_token)",
         ]
 
         do {
@@ -105,6 +105,4 @@ class FavoritesService {
             throw error
         }
     }
-    
-    
 }

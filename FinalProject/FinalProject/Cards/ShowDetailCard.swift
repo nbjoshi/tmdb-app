@@ -16,7 +16,7 @@ struct ShowDetailCard: View {
     @Environment(\.dismiss) private var dismiss
     let trendingId: Int
     let sessionId: String
-     let accountId: Int
+    let accountId: Int
     let isLoggedIn: Bool
     @State private var cardDetailVM = CardDetailViewModel()
     @State private var selectedMedia: SelectedMedia? = nil
@@ -89,14 +89,28 @@ struct ShowDetailCard: View {
                             HStack(spacing: 40) {
                                 Button(action: { showTab = .episodes }) {
                                     Text("Episodes")
-//                                        .background(showTab == .episodes ? Color.white : Color.clear)
+                                        .fontWeight(.semibold)
+                                        .padding(.vertical, 8)
+                                        .padding(.horizontal, 20)
+                                        .background(
+                                            RoundedRectangle(cornerRadius: 12)
+                                                .fill(showTab == .episodes ? Color.accentColor.opacity(0.2) : Color.clear)
+                                        )
                                 }
                                 Button(action: { showTab = .similar }) {
                                     Text("You May Also Like")
-//                                        .background(showTab == .similar ? Color.white : Color.clear)
+                                        .fontWeight(.semibold)
+                                        .padding(.vertical, 8)
+                                        .padding(.horizontal, 20)
+                                        .background(
+                                            RoundedRectangle(cornerRadius: 12)
+                                                .fill(showTab == .similar ? Color.accentColor.opacity(0.2) : Color.clear)
+                                        )
                                 }
                             }
                             .padding(.vertical)
+                            .animation(.easeInOut(duration: 0.2), value: showTab)
+
                             if showTab == .episodes {
                                 Menu {
                                     ForEach(show.seasons) { season in
@@ -138,10 +152,17 @@ struct ShowDetailCard: View {
                                                                 .frame(width: 120, height: 80)
                                                                 .cornerRadius(8)
                                                         }
-                                                        Text("S\(episode.seasonNumber) E\(episode.episodeNumber) - \(episode.name)")
-                                                            .font(.headline)
+                                                    } else {
+                                                        Color.gray
+                                                            .frame(width: 120, height: 80)
+                                                            .cornerRadius(8)
                                                     }
+
+                                                    Text("S\(episode.seasonNumber) E\(episode.episodeNumber) - \(episode.name)")
+                                                        .font(.headline)
+                                                        .multilineTextAlignment(.leading)
                                                 }
+
                                                 VStack(alignment: .leading, spacing: 12) {
                                                     Text(episode.overview)
                                                         .font(.subheadline)

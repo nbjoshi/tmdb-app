@@ -41,17 +41,37 @@ struct TrendingView: View {
                 HStack(spacing: 20) {
                     Button(action: { selectedTab = .all }) {
                         Text("All")
-//                            .background(selectedTab == .all ? Color.white : Color.clear)
+                            .fontWeight(.semibold)
+                            .padding(.vertical, 8)
+                            .padding(.horizontal, 20)
+                            .background(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(selectedTab == .all ? Color.accentColor.opacity(0.2) : Color.clear)
+                            )
                     }
                     Button(action: { selectedTab = .movie }) {
                         Text("Movies")
-//                            .background(selectedTab == .movie ? Color.white : Color.clear)
+                            .fontWeight(.semibold)
+                            .padding(.vertical, 8)
+                            .padding(.horizontal, 20)
+                            .background(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(selectedTab == .movie ? Color.accentColor.opacity(0.2) : Color.clear)
+                            )
                     }
                     Button(action: { selectedTab = .tv }) {
                         Text("TV Shows")
-//                            .background(selectedTab == .tv ? Color.white : Color.clear)
+                            .fontWeight(.semibold)
+                            .padding(.vertical, 8)
+                            .padding(.horizontal, 20)
+                            .background(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(selectedTab == .tv ? Color.accentColor.opacity(0.2) : Color.clear)
+                            )
                     }
                 }
+                .padding()
+                .animation(.easeInOut(duration: 0.2), value: selectedTab)
 
                 ScrollView(.vertical) {
                     LazyVStack {
@@ -98,6 +118,6 @@ struct TrendingView: View {
     }
 }
 
-//#Preview {
+// #Preview {
 //    TrendingView()
-//}
+// }

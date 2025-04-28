@@ -64,7 +64,7 @@ class CardDetailService {
     }
     
     func getSimilarMovies(movieId: Int) async throws -> SimilarMoviesResponse {
-        guard let url = URL(string: "https://api.themoviedb.org/3/movie/\(movieId)/similar") else {
+        guard let url = URL(string: "https://api.themoviedb.org/3/movie/\(movieId)/recommendations") else {
             throw URLError(.badURL)
         }
         var components = URLComponents(url: url, resolvingAgainstBaseURL: true)!
@@ -92,7 +92,7 @@ class CardDetailService {
     }
     
     func getSimilarShows(showId: Int) async throws -> SimilarShowsResponse {
-        guard let url = URL(string: "https://api.themoviedb.org/3/tv/\(showId)/similar") else {
+        guard let url = URL(string: "https://api.themoviedb.org/3/tv/\(showId)/recommendations") else {
             throw URLError(.badURL)
         }
         var components = URLComponents(url: url, resolvingAgainstBaseURL: true)!
@@ -151,8 +151,8 @@ class CardDetailService {
         let parameters = [
             "media_type": mediaType,
             "media_id": mediaId,
-            "favorite": favorite
-        ] as [String : Any?]
+            "favorite": favorite,
+        ] as [String: Any?]
         
         let postData = try JSONSerialization.data(withJSONObject: parameters, options: [])
         
@@ -172,7 +172,7 @@ class CardDetailService {
         request.allHTTPHeaderFields = [
             "accept": "application/json",
             "content-type": "application/json",
-            "Authorization": "Bearer \(Constants.access_token)"
+            "Authorization": "Bearer \(Constants.access_token)",
         ]
         request.httpBody = postData
         
@@ -201,7 +201,7 @@ class CardDetailService {
         request.timeoutInterval = 10
         request.allHTTPHeaderFields = [
             "accept": "application/json",
-            "Authorization": "Bearer \(Constants.access_token)"
+            "Authorization": "Bearer \(Constants.access_token)",
         ]
         
         do {
@@ -214,8 +214,6 @@ class CardDetailService {
     }
     
     func getMovieState(movieId: Int, sessionId: String) async throws -> StateResponse {
-        print("Movie State Service")
-        
         guard let url = URL(string: "https://api.themoviedb.org/3/movie/\(movieId)/account_states") else {
             throw URLError(.badURL)
         }
@@ -231,16 +229,14 @@ class CardDetailService {
         request.timeoutInterval = 10
         request.allHTTPHeaderFields = [
             "accept": "application/json",
-            "Authorization": "Bearer \(Constants.access_token)"
+            "Authorization": "Bearer \(Constants.access_token)",
         ]
         
         do {
             let (data, _) = try await URLSession.shared.data(for: request)
             let response: StateResponse = try JSONDecoder().decode(StateResponse.self, from: data)
-            print(response)
             return response
         } catch {
-            print(error)
             throw error
         }
     }
