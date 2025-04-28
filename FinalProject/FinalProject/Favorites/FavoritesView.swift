@@ -156,8 +156,28 @@ struct FavoritesView: View {
             }
         }
         else {
-            Text("Log in to see your favorite movies and TV shows or add movies and TV shows to your favorites.")
-                .padding()
+            VStack(spacing: 24) {
+                Spacer()
+                
+                Image(systemName: "heart.slash.fill")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 100, height: 100)
+                    .foregroundColor(.secondary)
+                
+                Text("No Favorites Yet")
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                
+                Text("Log in to save your favorite movies and TV shows, and view them here anytime.")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal)
+                
+                Spacer()
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
     }
 }

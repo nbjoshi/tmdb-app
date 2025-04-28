@@ -17,7 +17,7 @@ class ProfileViewModel: ObservableObject {
     @Published var errorMessage: String? = nil
     @Published var profile: Profile? = nil
     @Published var isLoggedIn: Bool = false
-    
+        
     func createRequestToken() async {
         do {
             let response = try await service.createRequestToken()
@@ -51,7 +51,6 @@ class ProfileViewModel: ObservableObject {
             let response = try await service.createSession(requestToken: requestToken)
             if response.success {
                 session = response.sessionId
-                isLoggedIn = true
                 errorMessage = nil
             } else {
                 errorMessage = "Failed to create session: Unknown error"
@@ -66,12 +65,14 @@ class ProfileViewModel: ObservableObject {
             let response = try await service.deleteSession(sessionId: sessionId)
             if response.success {
                 errorMessage = nil
-                isLoggedIn = false
+                print("Deleted session from TMDB")
             } else {
                 errorMessage = "Failed to delete session: Unknown error"
+                print("Failed to delete TMDB session")
             }
         } catch {
             errorMessage = "Failed to delete session: \(error)"
+            print("Failed to delete TMDB session")
         }
     }
     
@@ -79,6 +80,7 @@ class ProfileViewModel: ObservableObject {
         do {
             let response = try await service.getProfile(sessionId: sessionId)
             profile = response
+            isLoggedIn = true
             errorMessage = nil
         } catch {
             errorMessage = "Failed to get profile: \(error)"
@@ -102,7 +104,6 @@ class ProfileViewModel: ObservableObject {
             errorMessage = "Failed to save session: Unknown error"
         } else {
             errorMessage = nil
-            isLoggedIn = true
         }
     }
     
@@ -118,12 +119,12 @@ class ProfileViewModel: ObservableObject {
         let status = SecItemCopyMatching(query as CFDictionary, &item)
         
         if status == errSecSuccess, let data = item as? Data {
-            errorMessage = nil
             if let sessionId = String(data: data, encoding: .utf8) {
                 session = sessionId
-                isLoggedIn = true
+                print("SessionId successfully retrieved")
             }
         } else {
+            print("Failed to retrieve sessionId")
             errorMessage = "Failed to load session: \(status)"
         }
     }
@@ -132,18 +133,18 @@ class ProfileViewModel: ObservableObject {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrAccount as String: "tmdb_session_id",
-            kSecMatchLimit as String: kSecMatchLimitOne,
         ]
         
         let status = SecItemDelete(query as CFDictionary)
+                
         if status == errSecSuccess {
-            token = nil
-            validatedToken = nil
-            session = nil
+            print("Successfully deleted sessionId from Keychain")
             errorMessage = nil
-            profile = nil
-            isLoggedIn = false
+        } else if status == errSecItemNotFound {
+            print("No sessionId found in Keychain to delete")
+            errorMessage = "Failed to delete session from Keychain: \(status)"
         } else {
+            print("Failed to delete sessionId from Keychain with status: \(status)")
             errorMessage = "Failed to delete session from Keychain: \(status)"
         }
     }
