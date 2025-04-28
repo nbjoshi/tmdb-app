@@ -8,14 +8,15 @@
 import Foundation
 import Observation
 
-@Observable
-class ProfileViewModel {
-    var token: String? = nil
-    var validatedToken: String? = nil
-    var session: String? = nil
+@MainActor
+class ProfileViewModel: ObservableObject {
+    @Published var token: String? = nil
+    @Published var validatedToken: String? = nil
+    @Published var session: String? = nil
     let service = ProfileService()
-    var errorMessage: String? = nil
-    var profile: Profile? = nil
+    @Published var errorMessage: String? = nil
+    @Published var profile: Profile? = nil
+    @Published var isLoggedIn: Bool = false
     
     func createRequestToken() async {
         do {
@@ -50,6 +51,7 @@ class ProfileViewModel {
             let response = try await service.createSession(requestToken: requestToken)
             if response.success {
                 session = response.sessionId
+                isLoggedIn = true
                 errorMessage = nil
             } else {
                 errorMessage = "Failed to create session: Unknown error"
@@ -64,6 +66,7 @@ class ProfileViewModel {
             let response = try await service.deleteSession(sessionId: sessionId)
             if response.success {
                 errorMessage = nil
+                isLoggedIn = false
             } else {
                 errorMessage = "Failed to delete session: Unknown error"
             }
@@ -99,6 +102,7 @@ class ProfileViewModel {
             errorMessage = "Failed to save session: Unknown error"
         } else {
             errorMessage = nil
+            isLoggedIn = true
         }
     }
     
@@ -115,7 +119,10 @@ class ProfileViewModel {
         
         if status == errSecSuccess, let data = item as? Data {
             errorMessage = nil
-            session = String(data: data, encoding: .utf8)!
+            if let sessionId = String(data: data, encoding: .utf8) {
+                session = sessionId
+                isLoggedIn = true
+            }
         } else {
             errorMessage = "Failed to load session: \(status)"
         }
@@ -135,6 +142,7 @@ class ProfileViewModel {
             session = nil
             errorMessage = nil
             profile = nil
+            isLoggedIn = false
         } else {
             errorMessage = "Failed to delete session from Keychain: \(status)"
         }
@@ -146,5 +154,6 @@ class ProfileViewModel {
         }
         removeSession()
         profile = nil
+        isLoggedIn = false
     }
 }

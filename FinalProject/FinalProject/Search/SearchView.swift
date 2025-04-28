@@ -13,7 +13,8 @@ struct SearchView: View {
     @State private var hasCancel: Bool = false
     @FocusState private var isTextFieldFocused: Bool
     @State private var selectedMedia: SelectedMedia? = nil
-    
+    @ObservedObject var profileVM: ProfileViewModel
+
     var body: some View {
         VStack {
             HStack {
@@ -65,6 +66,7 @@ struct SearchView: View {
                             .onTapGesture {
                                 selectedMedia = SelectedMedia(id: result.id, mediaType: result.mediaType)
                             }
+                        Divider()
                     }
                 }
             }
@@ -75,10 +77,20 @@ struct SearchView: View {
         }
         .sheet(item: $selectedMedia) { media in
             if media.mediaType == "movie" {
-                MovieDetailCard(trendingId: media.id)
+                MovieDetailCard(
+                    trendingId: media.id,
+                    sessionId: profileVM.session ?? "",
+                    accountId: profileVM.profile?.id ?? 0,
+                    isLoggedIn: profileVM.isLoggedIn,
+                )
             }
             else if media.mediaType == "tv" {
-                ShowDetailCard(trendingId: media.id)
+                ShowDetailCard(
+                    trendingId: media.id,
+                    sessionId: profileVM.session ?? "",
+                    accountId: profileVM.profile?.id ?? 0,
+                    isLoggedIn: profileVM.isLoggedIn,
+                )
             }
         }
     }
@@ -90,7 +102,7 @@ extension View {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
 }
-
-#Preview {
-    SearchView()
-}
+//
+//#Preview {
+//    SearchView()
+//}

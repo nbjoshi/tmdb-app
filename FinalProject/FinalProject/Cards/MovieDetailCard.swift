@@ -10,6 +10,9 @@ import SwiftUI
 struct MovieDetailCard: View {
     @Environment(\.dismiss) private var dismiss
     let trendingId: Int
+    let sessionId: String
+     let accountId: Int
+    let isLoggedIn: Bool
     @State private var cardDetailVM = CardDetailViewModel()
     @State private var selectedMedia: SelectedMedia? = nil
     
@@ -39,11 +42,47 @@ struct MovieDetailCard: View {
                                 .font(.callout)
                                 .foregroundColor(.secondary)
                             
-                            HStack {
-                                Spacer()
-                                Button("You May Also Like") {}
-                                Spacer()
+                            if isLoggedIn {
+                                HStack {
+                                    Button {
+                                        Task {
+                                            withAnimation {
+                                                cardDetailVM.isFavorited.toggle()
+                                            }
+                                            await cardDetailVM.markAsFavorite(accountId: accountId, sessionId: sessionId, mediaType: "movie", mediaId: trendingId, favorite: cardDetailVM.isFavorited)
+                                        }
+                                    } label: {
+                                        VStack {
+                                            Image(systemName: cardDetailVM.isFavorited ? "star.fill" : "star")
+                                            Text(cardDetailVM.isFavorited ? "Unfavorite" : "Favorite")
+                                        }
+                                    }
+                                    Spacer()
+                                    Button {
+                                        // LMK
+                                    } label: {
+                                        VStack {
+                                            Image(systemName: "hand.thumbsup.fill")
+                                            Text("Like")
+                                        }
+                                    }
+                                    Spacer()
+                                    Button {
+                                        // LMK
+                                    } label: {
+                                        VStack {
+                                            Image(systemName: "hand.thumbsdown.fill")
+                                            Text("Dislike")
+                                        }
+                                    }
+                                }
+                                .padding(.vertical)
                             }
+                            
+                            HStack {
+                                Button("You May Also Like") {}
+                            }
+                            .padding(.vertical)
                             
                             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
                                 ForEach(cardDetailVM.similarMovies) { movie in
@@ -90,13 +129,19 @@ struct MovieDetailCard: View {
         .task {
             await cardDetailVM.getMovieDetails(movieId: trendingId)
             await cardDetailVM.getSimilarMovies(movieId: trendingId)
+            await cardDetailVM.getMovieState(movieId: trendingId, sessionId: sessionId)
+        }
+        .refreshable {
+            await cardDetailVM.getMovieDetails(movieId: trendingId)
+            await cardDetailVM.getSimilarMovies(movieId: trendingId)
+            await cardDetailVM.getMovieState(movieId: trendingId, sessionId: sessionId)
         }
         .sheet(item: $selectedMedia) { media in
             if media.mediaType == "movie" {
-                MovieDetailCard(trendingId: media.id)
+                MovieDetailCard(trendingId: media.id, sessionId: sessionId, accountId: accountId, isLoggedIn: isLoggedIn)
             }
             else if media.mediaType == "tv" {
-                ShowDetailCard(trendingId: media.id)
+                ShowDetailCard(trendingId: media.id, sessionId: sessionId, accountId: accountId, isLoggedIn: isLoggedIn)
             }
         }
     }

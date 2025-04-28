@@ -9,7 +9,7 @@ import Security
 import SwiftUI
 
 struct ProfileView: View {
-    @State private var profileVM = ProfileViewModel()
+    @ObservedObject var profileVM: ProfileViewModel
     @State private var username: String = ""
     @State private var password: String = ""
     
@@ -64,16 +64,10 @@ struct ProfileView: View {
                     }
                 }
             }
-            .task {
-                profileVM.loadSession()
-                if let savedSessionId = profileVM.session {
-                    await profileVM.getProfile(sessionId: savedSessionId)
-                }
-            }
         }
     }
 }
 
-#Preview {
-    ProfileView()
-}
+//#Preview {
+//    ProfileView()
+//}

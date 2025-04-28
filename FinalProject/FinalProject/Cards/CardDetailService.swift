@@ -18,7 +18,7 @@ class CardDetailService {
             URLQueryItem(name: "language", value: "en-US"),
         ]
         components.queryItems = components.queryItems.map { $0 + queryItems } ?? queryItems
-
+        
         var request = URLRequest(url: components.url!)
         request.httpMethod = "GET"
         request.timeoutInterval = 10
@@ -26,7 +26,7 @@ class CardDetailService {
             "accept": "application/json",
             "Authorization": "Bearer \(Constants.access_token)",
         ]
-
+        
         do {
             let (data, _) = try await URLSession.shared.data(for: request)
             let response: MovieDetails = try JSONDecoder().decode(MovieDetails.self, from: data)
@@ -45,7 +45,7 @@ class CardDetailService {
             URLQueryItem(name: "language", value: "en-US"),
         ]
         components.queryItems = components.queryItems.map { $0 + queryItems } ?? queryItems
-
+        
         var request = URLRequest(url: components.url!)
         request.httpMethod = "GET"
         request.timeoutInterval = 10
@@ -53,7 +53,7 @@ class CardDetailService {
             "accept": "application/json",
             "Authorization": "Bearer \(Constants.access_token)",
         ]
-
+        
         do {
             let (data, _) = try await URLSession.shared.data(for: request)
             let response: ShowDetails = try JSONDecoder().decode(ShowDetails.self, from: data)
@@ -73,7 +73,7 @@ class CardDetailService {
             URLQueryItem(name: "page", value: "1"),
         ]
         components.queryItems = components.queryItems.map { $0 + queryItems } ?? queryItems
-
+        
         var request = URLRequest(url: components.url!)
         request.httpMethod = "GET"
         request.timeoutInterval = 10
@@ -81,7 +81,7 @@ class CardDetailService {
             "accept": "application/json",
             "Authorization": "Bearer \(Constants.access_token)",
         ]
-
+        
         do {
             let (data, _) = try await URLSession.shared.data(for: request)
             let response: SimilarMoviesResponse = try JSONDecoder().decode(SimilarMoviesResponse.self, from: data)
@@ -101,7 +101,7 @@ class CardDetailService {
             URLQueryItem(name: "page", value: "1"),
         ]
         components.queryItems = components.queryItems.map { $0 + queryItems } ?? queryItems
-
+        
         var request = URLRequest(url: components.url!)
         request.httpMethod = "GET"
         request.timeoutInterval = 10
@@ -109,7 +109,7 @@ class CardDetailService {
             "accept": "application/json",
             "Authorization": "Bearer \(Constants.access_token)",
         ]
-
+        
         do {
             let (data, _) = try await URLSession.shared.data(for: request)
             let response: SimilarShowsResponse = try JSONDecoder().decode(SimilarShowsResponse.self, from: data)
@@ -129,7 +129,7 @@ class CardDetailService {
             URLQueryItem(name: "language", value: "en-US"),
         ]
         components.queryItems = components.queryItems.map { $0 + queryItems } ?? queryItems
-
+        
         var request = URLRequest(url: components.url!)
         request.httpMethod = "GET"
         request.timeoutInterval = 10
@@ -137,12 +137,110 @@ class CardDetailService {
             "accept": "application/json",
             "Authorization": "Bearer \(Constants.access_token)",
         ]
-
+        
         do {
             let (data, _) = try await URLSession.shared.data(for: request)
             let response: SeasonDetails = try JSONDecoder().decode(SeasonDetails.self, from: data)
             return response
         } catch {
+            throw error
+        }
+    }
+    
+    func markAsFavorite(accountId: Int, sessionId: String, mediaType: String, mediaId: Int, favorite: Bool) async throws -> FavoritesResponse {
+        let parameters = [
+            "media_type": mediaType,
+            "media_id": mediaId,
+            "favorite": favorite
+        ] as [String : Any?]
+        
+        let postData = try JSONSerialization.data(withJSONObject: parameters, options: [])
+        
+        guard let url = URL(string: "https://api.themoviedb.org/3/account/\(accountId)/favorite") else {
+            throw URLError(.badURL)
+        }
+        
+        var components = URLComponents(url: url, resolvingAgainstBaseURL: true)!
+        let queryItems: [URLQueryItem] = [
+            URLQueryItem(name: "session_id", value: sessionId),
+        ]
+        components.queryItems = components.queryItems.map { $0 + queryItems } ?? queryItems
+        
+        var request = URLRequest(url: components.url!)
+        request.httpMethod = "POST"
+        request.timeoutInterval = 10
+        request.allHTTPHeaderFields = [
+            "accept": "application/json",
+            "content-type": "application/json",
+            "Authorization": "Bearer \(Constants.access_token)"
+        ]
+        request.httpBody = postData
+        
+        do {
+            let (data, _) = try await URLSession.shared.data(for: request)
+            let response: FavoritesResponse = try JSONDecoder().decode(FavoritesResponse.self, from: data)
+            return response
+        } catch {
+            throw error
+        }
+    }
+    
+    func getShowState(showId: Int, sessionId: String) async throws -> StateResponse {
+        guard let url = URL(string: "https://api.themoviedb.org/3/tv/\(showId)/account_states") else {
+            throw URLError(.badURL)
+        }
+        
+        var components = URLComponents(url: url, resolvingAgainstBaseURL: true)!
+        let queryItems: [URLQueryItem] = [
+            URLQueryItem(name: "session_id", value: sessionId),
+        ]
+        components.queryItems = components.queryItems.map { $0 + queryItems } ?? queryItems
+        
+        var request = URLRequest(url: components.url!)
+        request.httpMethod = "GET"
+        request.timeoutInterval = 10
+        request.allHTTPHeaderFields = [
+            "accept": "application/json",
+            "Authorization": "Bearer \(Constants.access_token)"
+        ]
+        
+        do {
+            let (data, _) = try await URLSession.shared.data(for: request)
+            let response: StateResponse = try JSONDecoder().decode(StateResponse.self, from: data)
+            return response
+        } catch {
+            throw error
+        }
+    }
+    
+    func getMovieState(movieId: Int, sessionId: String) async throws -> StateResponse {
+        print("Movie State Service")
+        
+        guard let url = URL(string: "https://api.themoviedb.org/3/movie/\(movieId)/account_states") else {
+            throw URLError(.badURL)
+        }
+        
+        var components = URLComponents(url: url, resolvingAgainstBaseURL: true)!
+        let queryItems: [URLQueryItem] = [
+            URLQueryItem(name: "session_id", value: sessionId),
+        ]
+        components.queryItems = components.queryItems.map { $0 + queryItems } ?? queryItems
+        
+        var request = URLRequest(url: components.url!)
+        request.httpMethod = "GET"
+        request.timeoutInterval = 10
+        request.allHTTPHeaderFields = [
+            "accept": "application/json",
+            "Authorization": "Bearer \(Constants.access_token)"
+        ]
+        
+        do {
+            let (data, _) = try await URLSession.shared.data(for: request)
+            let response: StateResponse = try JSONDecoder().decode(StateResponse.self, from: data)
+            print(response)
+            return response
+        } catch {
+            print(error)
             throw error
         }
     }

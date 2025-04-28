@@ -33,6 +33,7 @@ struct TrendingView: View {
     @State private var trendingVM = TrendingViewModel()
     @State private var selectedTab: TrendingTab = .all
     @State private var selectedMedia: SelectedMedia? = nil
+    @ObservedObject var profileVM: ProfileViewModel
 
     var body: some View {
         NavigationStack {
@@ -59,6 +60,7 @@ struct TrendingView: View {
                                 .onTapGesture {
                                     selectedMedia = SelectedMedia(id: trending.id, mediaType: trending.mediaType)
                                 }
+                            Divider()
                         }
                     }
                 }
@@ -76,16 +78,26 @@ struct TrendingView: View {
             }
             .sheet(item: $selectedMedia) { media in
                 if media.mediaType == "movie" {
-                    MovieDetailCard(trendingId: media.id)
+                    MovieDetailCard(
+                        trendingId: media.id,
+                        sessionId: profileVM.session ?? "",
+                        accountId: profileVM.profile?.id ?? 0,
+                        isLoggedIn: profileVM.isLoggedIn,
+                    )
                 }
                 else if media.mediaType == "tv" {
-                    ShowDetailCard(trendingId: media.id)
+                    ShowDetailCard(
+                        trendingId: media.id,
+                        sessionId: profileVM.session ?? "",
+                        accountId: profileVM.profile?.id ?? 0,
+                        isLoggedIn: profileVM.isLoggedIn,
+                    )
                 }
             }
         }
     }
 }
 
-#Preview {
-    TrendingView()
-}
+//#Preview {
+//    TrendingView()
+//}

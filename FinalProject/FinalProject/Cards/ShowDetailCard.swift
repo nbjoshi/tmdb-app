@@ -15,6 +15,9 @@ enum ShowTab {
 struct ShowDetailCard: View {
     @Environment(\.dismiss) private var dismiss
     let trendingId: Int
+    let sessionId: String
+     let accountId: Int
+    let isLoggedIn: Bool
     @State private var cardDetailVM = CardDetailViewModel()
     @State private var selectedMedia: SelectedMedia? = nil
     @State private var showTab: ShowTab = .episodes
@@ -46,6 +49,43 @@ struct ShowDetailCard: View {
                                 .font(.footnote)
                                 .foregroundColor(.secondary)
                             
+                            if isLoggedIn {
+                                HStack {
+                                    Button {
+                                        Task {
+                                            withAnimation {
+                                                cardDetailVM.isFavorited.toggle()
+                                            }
+                                            await cardDetailVM.markAsFavorite(accountId: accountId, sessionId: sessionId, mediaType: "tv", mediaId: trendingId, favorite: cardDetailVM.isFavorited)
+                                        }
+                                    } label: {
+                                        VStack {
+                                            Image(systemName: cardDetailVM.isFavorited ? "star.fill" : "star")
+                                            Text(cardDetailVM.isFavorited ? "Unfavorite" : "Favorite")
+                                        }
+                                    }
+                                    Spacer()
+                                    Button {
+                                        // LMK
+                                    } label: {
+                                        VStack {
+                                            Image(systemName: "hand.thumbsup.fill")
+                                            Text("Like")
+                                        }
+                                    }
+                                    Spacer()
+                                    Button {
+                                        // LMK
+                                    } label: {
+                                        VStack {
+                                            Image(systemName: "hand.thumbsdown.fill")
+                                            Text("Dislike")
+                                        }
+                                    }
+                                }
+                                .padding(.vertical)
+                            }
+                            
                             HStack(spacing: 40) {
                                 Button(action: { showTab = .episodes }) {
                                     Text("Episodes")
@@ -56,6 +96,7 @@ struct ShowDetailCard: View {
 //                                        .background(showTab == .similar ? Color.white : Color.clear)
                                 }
                             }
+                            .padding(.vertical)
                             if showTab == .episodes {
                                 Menu {
                                     ForEach(show.seasons) { season in
@@ -109,6 +150,7 @@ struct ShowDetailCard: View {
                                                         .foregroundColor(.secondary)
                                                 }
                                             }
+                                            Divider()
                                         }
                                     }
                                 }
@@ -169,16 +211,22 @@ struct ShowDetailCard: View {
         .task {
             await cardDetailVM.getShowDetails(showId: trendingId)
             await cardDetailVM.getSimilarShows(showId: trendingId)
+            await cardDetailVM.getShowState(showId: trendingId, sessionId: sessionId)
             if let firstSeason = cardDetailVM.showDetails?.seasons.first {
                 selectedSeason = firstSeason
                 await cardDetailVM.getSeasonDetails(showId: trendingId, seasonNumber: firstSeason.seasonNumber)
             }
         }
+        .refreshable {
+            await cardDetailVM.getMovieDetails(movieId: trendingId)
+            await cardDetailVM.getSimilarMovies(movieId: trendingId)
+            await cardDetailVM.getMovieState(movieId: trendingId, sessionId: sessionId)
+        }
         .sheet(item: $selectedMedia) { media in
             if media.mediaType == "movie" {
-                MovieDetailCard(trendingId: media.id)
+                MovieDetailCard(trendingId: media.id, sessionId: sessionId, accountId: accountId, isLoggedIn: isLoggedIn)
             } else if media.mediaType == "tv" {
-                ShowDetailCard(trendingId: media.id)
+                ShowDetailCard(trendingId: media.id, sessionId: sessionId, accountId: accountId, isLoggedIn: isLoggedIn)
             }
         }
     }

@@ -9,9 +9,11 @@ import SwiftUI
 
 @main
 struct FinalProjectApp: App {
+    @StateObject private var profileVM = ProfileViewModel()
+
     var body: some Scene {
         WindowGroup {
-            HomeView()
+            HomeView(profileVM: profileVM)
         }
     }
 }
