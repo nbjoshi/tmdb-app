@@ -16,25 +16,57 @@ struct ProfileView: View {
     var body: some View {
         NavigationStack {
             if let profile = profileVM.profile {
-                VStack(spacing: 20) {
-                    Text("Welcome, \(profile.name)!")
-                        .font(.title)
-                        .bold()
-                    
-                    Button("Log Out") {
-                        Task {
-                            if profileVM.session != nil {
-                                username = ""
-                                password = ""
-                                await profileVM.logout()
+                            VStack(spacing: 20) {
+                                if let avatarPath = profile.avatar.tmdb.avatarPath,
+                                   let url = URL(string: "https://image.tmdb.org/t/p/w200\(avatarPath)") {
+                                    AsyncImage(url: url) { image in
+                                        image
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fill)
+                                            .frame(width: 100, height: 100)
+                                            .clipShape(Circle())
+                                            .overlay(Circle().stroke(Color.accentColor, lineWidth: 3))
+                                    } placeholder: {
+                                        ProgressView()
+                                    }
+                                } else {
+                                    Image(systemName: "person.crop.circle.fill")
+                                        .resizable()
+                                        .frame(width: 100, height: 100)
+                                        .foregroundColor(.gray)
+                                }
+                                
+                                Text("Welcome, \(profile.name)!")
+                                    .font(.title)
+                                    .fontWeight(.semibold)
+                                    .multilineTextAlignment(.center)
+                                
+                                Text("@\(profile.username)")
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
+                                
+                                Button(action: {
+                                    Task {
+                                        if profileVM.session != nil {
+                                            username = ""
+                                            password = ""
+                                            await profileVM.logout()
+                                        }
+                                    }
+                                }) {
+                                    Text("Log Out")
+                                        .frame(maxWidth: .infinity)
+                                        .padding()
+                                        .foregroundColor(.white)
+                                        .background(Color.red)
+                                        .cornerRadius(12)
+                                }
+                                .padding(.top, 10)
+                                
+                                Spacer()
                             }
-                        }
-                    }
-                    .foregroundStyle(.red)
-                    .padding()
-                }
-                .padding()
-            } else {
+                            .padding()
+                        } else {
                 Form {
                     Section(header: Text("TMDB Login")) {
                         TextField("Username", text: $username)

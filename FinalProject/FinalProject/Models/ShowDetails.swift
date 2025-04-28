@@ -18,6 +18,7 @@ struct ShowDetails: Identifiable, Codable {
     let posterPath: String
     let genres: [Genre]
     let firstAirDate: String
+    let voteAverage: Double
     
     enum CodingKeys: String, CodingKey {
         case id
@@ -30,6 +31,7 @@ struct ShowDetails: Identifiable, Codable {
         case overview
         case posterPath = "poster_path"
         case genres
+        case voteAverage = "vote_average"
     }
 }
 

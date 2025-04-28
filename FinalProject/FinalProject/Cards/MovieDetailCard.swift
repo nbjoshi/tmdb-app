@@ -42,6 +42,8 @@ struct MovieDetailCard: View {
                                 .font(.callout)
                                 .foregroundColor(.secondary)
                             
+                            StarRatingView(rating: movie.voteAverage)
+                            
                             if isLoggedIn {
                                 HStack {
                                     Button {
@@ -78,6 +80,7 @@ struct MovieDetailCard: View {
                                 }
                                 .padding(.vertical)
                             }
+                            Divider()
                             
                             HStack {
                                 Button("You May Also Like") {}

@@ -45,6 +45,8 @@ struct ShowDetailCard: View {
                             Text(show.overview)
                                 .font(.body)
                             
+                            StarRatingView(rating: show.voteAverage)
+                            
                             Text("\(show.firstAirDate.prefix(4)) · \(show.genres.map { $0.name }.joined(separator: ", ")) · TV Show")
                                 .font(.footnote)
                                 .foregroundColor(.secondary)
@@ -85,6 +87,7 @@ struct ShowDetailCard: View {
                                 }
                                 .padding(.vertical)
                             }
+                            Divider()
                             
                             HStack(spacing: 40) {
                                 Button(action: { showTab = .episodes }) {

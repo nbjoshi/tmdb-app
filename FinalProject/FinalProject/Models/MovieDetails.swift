@@ -15,6 +15,7 @@ struct MovieDetails: Identifiable, Codable {
     let releaseDate: String
     let tagline: String
     let title: String
+    let voteAverage: Double
     
     enum CodingKeys: String, CodingKey {
         case genres
@@ -24,6 +25,7 @@ struct MovieDetails: Identifiable, Codable {
         case releaseDate = "release_date"
         case tagline
         case title
+        case voteAverage = "vote_average"
     }
 }
 
