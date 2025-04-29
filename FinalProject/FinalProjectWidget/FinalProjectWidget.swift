@@ -39,35 +39,110 @@ struct SimpleEntry: TimelineEntry {
 struct FinalProjectWidgetEntryView: View {
     @Query() var items: [WidgetModel]
     var entry: Provider.Entry
+    @Environment(\.widgetFamily) var family
 
     var body: some View {
-        if items.isEmpty {
-            VStack {
-                Text("Failed to retrieve trending media.")
-                    .font(.headline)
-                    .multilineTextAlignment(.center)
-            }
-            .padding()
-            .foregroundStyle(.white)
-            .containerBackground(.black.gradient, for: .widget)
-        } else {
-            VStack(alignment: .leading, spacing: 10) {
-                Text("Trending")
-                    .fontWeight(.medium)
+        ZStack {
+            if items.isEmpty {
+                VStack(spacing: 8) {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .resizable()
+                        .frame(width: 24, height: 24)
+                        .foregroundStyle(.yellow)
 
-                Divider()
-                ForEach(items.prefix(5)) { item in
-                    HStack(spacing: 6) {
-                        Text(item.displayName ?? "Unknown")
-                            .font(.caption)
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.7)
+                    Text("No Trending Data")
+                        .font(.footnote)
+                        .multilineTextAlignment(.center)
+                }
+                .padding()
+                .foregroundStyle(.white)
+                .containerBackground(.black.gradient, for: .widget)
+            } else {
+                switch family {
+                case .systemSmall:
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("Trending 🔥")
+                            .font(.subheadline)
+                            .bold()
+                        
+                        Divider()
+
+                        if let first = items.first {
+                            HStack(spacing: 4) {
+                                Image(systemName: "play.rectangle.fill")
+                                    .resizable()
+                                    .frame(width: 12, height: 12)
+                                
+                                Text(first.displayName ?? "Unknown")
+                                    .font(.caption)
+                                    .lineLimit(1)
+                                    .minimumScaleFactor(0.7)
+                            }
+                            Text("(\(first.mediaType))")
+                                .font(.caption2)
+                                .foregroundColor(.gray)
+                        }
                     }
+                    .containerBackground(.black.gradient, for: .widget)
+
+                case .systemMedium:
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Trending 🔥")
+                            .font(.title2)
+                            .bold()
+
+                        Divider().background(Color.white.opacity(0.6))
+
+                        ForEach(items.prefix(3)) { item in
+                            HStack(spacing: 6) {
+                                Image(systemName: "play.rectangle.fill")
+                                    .resizable()
+                                    .frame(width: 14, height: 14)
+                                
+                                Text(item.displayName ?? "Unknown")
+                                    .font(.callout)
+                                    .lineLimit(1)
+                                    .minimumScaleFactor(0.7)
+                                
+                                Text("(\(item.mediaType))")
+                                    .font(.caption2)
+                                    .foregroundColor(.gray)
+                            }
+                        }
+                    }
+                    .padding()
+                    .containerBackground(.black.gradient, for: .widget)
+
+                default:
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("Trending 🔥")
+                            .font(.title)
+                            .bold()
+
+                        Divider().background(Color.white.opacity(0.6))
+
+                        ForEach(items.prefix(5)) { item in
+                            HStack(spacing: 8) {
+                                Image(systemName: "play.rectangle.fill")
+                                    .resizable()
+                                    .frame(width: 16, height: 16)
+                                
+                                Text(item.displayName ?? "Unknown")
+                                    .font(.callout)
+                                    .lineLimit(1)
+                                    .minimumScaleFactor(0.7)
+                                
+                                Text("(\(item.mediaType))")
+                                    .font(.caption2)
+                                    .foregroundColor(.gray)
+                            }
+                        }
+                        Spacer()
+                    }
+                    .padding()
+                    .containerBackground(.black.gradient, for: .widget)
                 }
             }
-            .padding()
-            .foregroundStyle(.white)
-            .containerBackground(.black.gradient, for: .widget)
         }
     }
 }
