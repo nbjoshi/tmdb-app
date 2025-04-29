@@ -80,7 +80,6 @@ struct FinalProjectWidgetEntryView: View {
                                     .lineLimit(1)
                                     .minimumScaleFactor(0.7)
                                     .foregroundStyle(.primary)
-
                             }
                             Text("(\(first.mediaType))")
                                 .font(.caption2)
