@@ -148,6 +148,8 @@ class CardDetailService {
     }
     
     func markAsFavorite(accountId: Int, sessionId: String, mediaType: String, mediaId: Int, favorite: Bool) async throws -> FavoritesResponse {
+        print("mediaType: \(mediaType)")
+        
         let parameters = [
             "media_type": mediaType,
             "media_id": mediaId,
@@ -235,6 +237,51 @@ class CardDetailService {
         do {
             let (data, _) = try await URLSession.shared.data(for: request)
             let response: StateResponse = try JSONDecoder().decode(StateResponse.self, from: data)
+            return response
+        } catch {
+            throw error
+        }
+    }
+    
+    func markAsWatchlist(accountId: Int, sessionId: String, mediaType: String, mediaId: Int, watchlist: Bool) async throws -> WatchlistResponse {
+        print("accountId: \(accountId)")
+        print("sessionId: \(sessionId)")
+        print("mediaType: \(mediaType)")
+        print("mediaId: \(mediaId)")
+        print("watchlist: \(watchlist)")
+        
+        print("Mark as watch list service")
+        let parameters = [
+            "media_type": "tv",
+            "media_id": mediaId,
+            "watchlist": watchlist,
+        ] as [String: Any?]
+
+        let postData = try JSONSerialization.data(withJSONObject: parameters, options: [])
+
+        guard let url = URL(string: "https://api.themoviedb.org/3/account/\(accountId)/watchlist") else {
+            throw URLError(.badURL)
+        }
+        
+        var components = URLComponents(url: url, resolvingAgainstBaseURL: true)!
+        let queryItems: [URLQueryItem] = [
+            URLQueryItem(name: "session_id", value: sessionId),
+        ]
+        components.queryItems = components.queryItems.map { $0 + queryItems } ?? queryItems
+        
+        var request = URLRequest(url: components.url!)
+        request.httpMethod = "POST"
+        request.timeoutInterval = 10
+        request.allHTTPHeaderFields = [
+            "accept": "application/json",
+            "content-type": "application/json",
+            "Authorization": "Bearer \(Constants.access_token)",
+        ]
+        request.httpBody = postData
+
+        do {
+            let (data, _) = try await URLSession.shared.data(for: request)
+            let response: WatchlistResponse = try JSONDecoder().decode(WatchlistResponse.self, from: data)
             return response
         } catch {
             throw error

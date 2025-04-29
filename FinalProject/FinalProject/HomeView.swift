@@ -24,16 +24,21 @@ struct HomeView: View {
                     Label("Favorites", systemImage: "star.fill")
                 }
                 .tag(1)
+            WatchlistView(profileVM: profileVM)
+                .tabItem {
+                    Label("Watchlist", systemImage: "tv.fill")
+                }
+                .tag(2)
             SearchView(profileVM: profileVM)
                 .tabItem {
                     Label("Search", systemImage: "magnifyingglass")
                 }
-                .tag(2)
+                .tag(3)
             ProfileView(profileVM: profileVM)
                 .tabItem {
                     Label("Profile", systemImage: "person.crop.circle.fill")
                 }
-                .tag(3)
+                .tag(4)
         }
         .task {
             profileVM.loadSession()

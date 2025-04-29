@@ -18,6 +18,7 @@ class CardDetailViewModel {
     var similarShows: [SimilarShow] = []
     private let service = CardDetailService()
     var isFavorited: Bool = false
+    var isWatchlisted: Bool = false
     
     func getMovieDetails(movieId: Int) async {
         do {
@@ -84,6 +85,7 @@ class CardDetailViewModel {
         do {
             let response = try await service.getShowState(showId: showId, sessionId: sessionId)
             isFavorited = response.favorite
+            isWatchlisted = response.watchlist
         } catch {
             errorMessage = "Failed to retrieve show state."
         }
@@ -93,8 +95,20 @@ class CardDetailViewModel {
         do {
             let response = try await service.getMovieState(movieId: movieId, sessionId: sessionId)
             isFavorited = response.favorite
+            isWatchlisted = response.watchlist
         } catch {
             errorMessage = "Failed to retrieve movie state."
+        }
+    }
+    
+    func markAsWatchlist(accountId: Int, sessionId: String, mediaType: String, mediaId: Int, watchlist: Bool) async {
+        do {
+            let response = try await service.markAsWatchlist(accountId: accountId, sessionId: sessionId, mediaType: mediaType, mediaId: mediaId, watchlist: watchlist)
+            if response.statusMessage == "Success" {
+                errorMessage = nil
+            }
+        } catch {
+            errorMessage = "Failed to add to favorites: \(error)"
         }
     }
 }

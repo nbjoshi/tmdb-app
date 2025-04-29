@@ -61,20 +61,16 @@ struct MovieDetailCard: View {
                                     }
                                     Spacer()
                                     Button {
-                                        // LMK
-                                    } label: {
-                                        VStack {
-                                            Image(systemName: "hand.thumbsup.fill")
-                                            Text("Like")
+                                        Task {
+                                            withAnimation {
+                                                cardDetailVM.isWatchlisted.toggle()
+                                            }
+                                            await cardDetailVM.markAsWatchlist(accountId: accountId, sessionId: sessionId, mediaType: "movie", mediaId: trendingId, watchlist: cardDetailVM.isWatchlisted)
                                         }
-                                    }
-                                    Spacer()
-                                    Button {
-                                        // LMK
                                     } label: {
                                         VStack {
-                                            Image(systemName: "hand.thumbsdown.fill")
-                                            Text("Dislike")
+                                            Image(systemName: cardDetailVM.isWatchlisted ? "tv.and.mediabox.fill" : "tv.and.mediabox")
+                                            Text(cardDetailVM.isWatchlisted ? "Remove from Watchlist" : "Add to Watchlist")
                                         }
                                     }
                                 }
