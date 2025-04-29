@@ -5,16 +5,16 @@
 //  Created by Neel Joshi on 4/28/25.
 //
 
-import WidgetKit
-import SwiftUI
 import SwiftData
+import SwiftUI
+import WidgetKit
 
 struct Provider: TimelineProvider {
     func placeholder(in context: Context) -> SimpleEntry {
         SimpleEntry(date: Date(), emoji: "😀")
     }
 
-    func getSnapshot(in context: Context, completion: @escaping (SimpleEntry) -> ()) {
+    func getSnapshot(in context: Context, completion: @escaping (SimpleEntry) -> Void) {
         let entry = SimpleEntry(date: Date(), emoji: "😀")
         completion(entry)
     }
@@ -41,19 +41,33 @@ struct FinalProjectWidgetEntryView: View {
     var entry: Provider.Entry
 
     var body: some View {
-        if let item = items.first {
-            VStack(alignment: .leading, spacing: 8) {
-                Text(item.displayName ?? "")
-            }
-            .padding()
-            .containerBackground(.blue.gradient, for: .widget)
-        } else {
+        if items.isEmpty {
             VStack {
-                Text("Failed to retrieve trending media. Try again later.")
+                Text("Failed to retrieve trending media.")
                     .font(.headline)
+                    .multilineTextAlignment(.center)
             }
             .padding()
-            .containerBackground(.blue.gradient, for: .widget)
+            .foregroundStyle(.white)
+            .containerBackground(.black.gradient, for: .widget)
+        } else {
+            VStack(alignment: .leading, spacing: 10) {
+                Text("Trending")
+                    .fontWeight(.medium)
+
+                Divider()
+                ForEach(items.prefix(5)) { item in
+                    HStack(spacing: 6) {
+                        Text(item.displayName ?? "Unknown")
+                            .font(.caption)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.7)
+                    }
+                }
+            }
+            .padding()
+            .foregroundStyle(.white)
+            .containerBackground(.black.gradient, for: .widget)
         }
     }
 }

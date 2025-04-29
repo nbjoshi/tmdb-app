@@ -5,8 +5,8 @@
 //  Created by Neel Joshi on 4/28/25.
 //
 
-import WidgetKit
 import SwiftUI
+import WidgetKit
 
 @main
 struct FinalProjectWidgetBundle: WidgetBundle {

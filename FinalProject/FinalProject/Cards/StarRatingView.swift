@@ -1,5 +1,5 @@
 //
-//  StarView.swift
+//  StarRatingView.swift
 //  FinalProject
 //
 //  Created by Neel Joshi on 4/28/25.
@@ -11,10 +11,10 @@ struct StarRatingView: View {
     let rating: Double
     
     var body: some View {
-        let starCount = Int((rating).rounded())
+        let starCount = Int(rating.rounded())
         
         HStack(spacing: 4) {
-            ForEach(0..<10) { index in
+            ForEach(0 ..< 10) { index in
                 Image(systemName: index < starCount ? "star.fill" : "star")
                     .foregroundColor(.yellow)
             }
@@ -22,6 +22,6 @@ struct StarRatingView: View {
     }
 }
 
-//#Preview {
+// #Preview {
 //    StarView()
-//}
+// }

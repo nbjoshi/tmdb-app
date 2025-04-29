@@ -5,8 +5,8 @@
 //  Created by Neel Joshi on 4/17/25.
 //
 
-import SwiftUI
 import SwiftData
+import SwiftUI
 
 struct HomeView: View {
     @State private var selectedTab = 0 // 0: Trending, 1: Favorites, 2: Search, 3: Profile

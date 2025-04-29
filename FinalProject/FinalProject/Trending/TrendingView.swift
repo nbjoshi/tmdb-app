@@ -5,8 +5,8 @@
 //  Created by Neel Joshi on 4/17/25.
 //
 
-import SwiftUI
 import SwiftData
+import SwiftUI
 import WidgetKit
 
 enum TrendingTab {
@@ -91,8 +91,12 @@ struct TrendingView: View {
             }
             .task {
                 await trendingVM.getTrending(type: selectedTab.pathValue)
-                insertRandomTrendingItem()
-
+                
+                if trendingVM.trending.isEmpty {
+                } else {
+                    insertRandomTrendingItems()
+                }
+                
                 let notifications = NotificationCenter.default.notifications(named: ModelContext.didSave)
                 for await _ in notifications {
                     WidgetCenter.shared.reloadAllTimelines()
@@ -126,21 +130,58 @@ struct TrendingView: View {
             }
         }
     }
-    private func insertRandomTrendingItem() {
-            guard !trendingVM.trending.isEmpty else { return }
-            let randomTrending = trendingVM.trending.randomElement()!
 
+    private func insertRandomTrendingItems() {
+        printAllItemsInSwiftData()
+        guard !trendingVM.trending.isEmpty else {
+            return
+        }
+        
+        deleteAllItemsInSwiftData()
+        
+        let randomItems = Array(trendingVM.trending.shuffled().prefix(5))
+
+        for trending in randomItems {
             let newItem = WidgetModel(
-                id: randomTrending.id,
-                mediaType: randomTrending.mediaType,
-                posterPath: randomTrending.posterPath,
-                profilePath: randomTrending.profilePath,
-                title: randomTrending.title,
-                name: randomTrending.name
+                id: trending.id,
+                mediaType: trending.mediaType,
+                posterPath: trending.posterPath,
+                profilePath: trending.profilePath,
+                title: trending.title,
+                name: trending.name
             )
-
+            
             modelContext.insert(newItem)
         }
+    }
+    
+    private func printAllItemsInSwiftData() {
+        let fetchDescriptor = FetchDescriptor<WidgetModel>()
+        do {
+            let items = try modelContext.fetch(fetchDescriptor)
+            print("=== SwiftData Items ===")
+            for item in items {
+                print("ID: \(item.id), Title: \(item.title ?? "N/A"), Name: \(item.name ?? "N/A"), MediaType: \(item.mediaType)")
+            }
+            print("=======================")
+        } catch {
+            print("Failed to fetch WidgetModel items: \(error)")
+        }
+    }
+    
+    private func deleteAllItemsInSwiftData() {
+        let fetchDescriptor = FetchDescriptor<WidgetModel>()
+        do {
+            let items = try modelContext.fetch(fetchDescriptor)
+            for item in items {
+                modelContext.delete(item)
+            }
+            try modelContext.save()
+            print("✅ Deleted all WidgetModel entries.")
+        } catch {
+            print("Failed to delete WidgetModel items: \(error)")
+        }
+    }
 }
 
 // #Preview {
