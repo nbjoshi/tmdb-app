@@ -216,6 +216,7 @@ class CardDetailService {
     }
     
     func getMovieState(movieId: Int, sessionId: String) async throws -> StateResponse {
+        print(movieId)
         guard let url = URL(string: "https://api.themoviedb.org/3/movie/\(movieId)/account_states") else {
             throw URLError(.badURL)
         }
@@ -244,13 +245,6 @@ class CardDetailService {
     }
     
     func markAsWatchlist(accountId: Int, sessionId: String, mediaType: String, mediaId: Int, watchlist: Bool) async throws -> WatchlistResponse {
-        print("accountId: \(accountId)")
-        print("sessionId: \(sessionId)")
-        print("mediaType: \(mediaType)")
-        print("mediaId: \(mediaId)")
-        print("watchlist: \(watchlist)")
-        
-        print("Mark as watch list service")
         let parameters = [
             "media_type": "tv",
             "media_id": mediaId,
@@ -282,6 +276,64 @@ class CardDetailService {
         do {
             let (data, _) = try await URLSession.shared.data(for: request)
             let response: WatchlistResponse = try JSONDecoder().decode(WatchlistResponse.self, from: data)
+            return response
+        } catch {
+            throw error
+        }
+    }
+    
+    func getMovieReviews(movieId: Int) async throws -> ReviewResponse {
+        guard let url = URL(string: "https://api.themoviedb.org/3/movie/\(movieId)/reviews") else {
+            throw URLError(.badURL)
+        }
+        
+        var components = URLComponents(url: url, resolvingAgainstBaseURL: true)!
+        let queryItems: [URLQueryItem] = [
+            URLQueryItem(name: "language", value: "en-US"),
+            URLQueryItem(name: "page", value: "1"),
+        ]
+        components.queryItems = components.queryItems.map { $0 + queryItems } ?? queryItems
+
+        var request = URLRequest(url: components.url!)
+        request.httpMethod = "GET"
+        request.timeoutInterval = 10
+        request.allHTTPHeaderFields = [
+            "accept": "application/json",
+            "Authorization": "Bearer \(Constants.access_token)",
+        ]
+
+        do {
+            let (data, _) = try await URLSession.shared.data(for: request)
+            let response: ReviewResponse = try JSONDecoder().decode(ReviewResponse.self, from: data)
+            return response
+        } catch {
+            throw error
+        }
+    }
+    
+    func getShowReviews(showId: Int) async throws -> ReviewResponse {
+        guard let url = URL(string: "https://api.themoviedb.org/3/tv/\(showId)/reviews") else {
+            throw URLError(.badURL)
+        }
+        
+        var components = URLComponents(url: url, resolvingAgainstBaseURL: true)!
+        let queryItems: [URLQueryItem] = [
+            URLQueryItem(name: "language", value: "en-US"),
+            URLQueryItem(name: "page", value: "1"),
+        ]
+        components.queryItems = components.queryItems.map { $0 + queryItems } ?? queryItems
+
+        var request = URLRequest(url: components.url!)
+        request.httpMethod = "GET"
+        request.timeoutInterval = 10
+        request.allHTTPHeaderFields = [
+            "accept": "application/json",
+            "Authorization": "Bearer \(Constants.access_token)",
+        ]
+
+        do {
+            let (data, _) = try await URLSession.shared.data(for: request)
+            let response: ReviewResponse = try JSONDecoder().decode(ReviewResponse.self, from: data)
             return response
         } catch {
             throw error

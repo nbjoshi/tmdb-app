@@ -10,6 +10,7 @@ import SwiftUI
 enum ShowTab {
     case episodes
     case similar
+    case reviews
 }
 
 struct ShowDetailCard: View {
@@ -85,12 +86,12 @@ struct ShowDetailCard: View {
                             }
                             Divider()
                             
-                            HStack(spacing: 40) {
+                            HStack(spacing: 10) {
                                 Button(action: { showTab = .episodes }) {
                                     Text("Episodes")
                                         .fontWeight(.semibold)
                                         .padding(.vertical, 8)
-                                        .padding(.horizontal, 20)
+                                        .padding(.horizontal, 12)
                                         .background(
                                             RoundedRectangle(cornerRadius: 12)
                                                 .fill(showTab == .episodes ? Color.accentColor.opacity(0.2) : Color.clear)
@@ -100,10 +101,20 @@ struct ShowDetailCard: View {
                                     Text("You May Also Like")
                                         .fontWeight(.semibold)
                                         .padding(.vertical, 8)
-                                        .padding(.horizontal, 20)
+                                        .padding(.horizontal, 12)
                                         .background(
                                             RoundedRectangle(cornerRadius: 12)
                                                 .fill(showTab == .similar ? Color.accentColor.opacity(0.2) : Color.clear)
+                                        )
+                                }
+                                Button(action: { showTab = .reviews }) {
+                                    Text("Reviews")
+                                        .fontWeight(.semibold)
+                                        .padding(.vertical, 8)
+                                        .padding(.horizontal, 12)
+                                        .background(
+                                            RoundedRectangle(cornerRadius: 12)
+                                                .fill(showTab == .reviews ? Color.accentColor.opacity(0.2) : Color.clear)
                                         )
                                 }
                             }
@@ -207,6 +218,14 @@ struct ShowDetailCard: View {
                                     }
                                 }
                             }
+                            
+                            if showTab == .reviews {
+                                LazyVStack(alignment: .leading) {
+                                    ForEach(cardDetailVM.showReviews) { review in
+                                        ReviewView(review: review)
+                                    }
+                                }
+                            }
                         }
                         .padding()
                         
@@ -222,7 +241,8 @@ struct ShowDetailCard: View {
                 dismiss()
             }) {
                 Image(systemName: "xmark")
-                    .font(.headline)
+                    .font(.title3)
+                    .bold()
                     .foregroundColor(.white)
             }
             .padding()
@@ -232,6 +252,7 @@ struct ShowDetailCard: View {
             await cardDetailVM.getShowDetails(showId: trendingId)
             await cardDetailVM.getSimilarShows(showId: trendingId)
             await cardDetailVM.getShowState(showId: trendingId, sessionId: sessionId)
+            await cardDetailVM.getShowReviews(showId: trendingId)
             if let firstSeason = cardDetailVM.showDetails?.seasons.first {
                 selectedSeason = firstSeason
                 await cardDetailVM.getSeasonDetails(showId: trendingId, seasonNumber: firstSeason.seasonNumber)

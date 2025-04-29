@@ -19,6 +19,8 @@ class CardDetailViewModel {
     private let service = CardDetailService()
     var isFavorited: Bool = false
     var isWatchlisted: Bool = false
+    var movieReviews: [Review] = []
+    var showReviews: [Review] = []
     
     func getMovieDetails(movieId: Int) async {
         do {
@@ -109,6 +111,26 @@ class CardDetailViewModel {
             }
         } catch {
             errorMessage = "Failed to add to favorites: \(error)"
+        }
+    }
+    
+    func getMovieReviews(movieId: Int) async {
+        do {
+            let response = try await service.getMovieReviews(movieId: movieId)
+            movieReviews = response.results.reversed()
+            errorMessage = nil
+        } catch {
+            errorMessage = "Failed to load movie reviews: \(error)"
+        }
+    }
+    
+    func getShowReviews(showId: Int) async {
+        do {
+            let response = try await service.getShowReviews(showId: showId)
+            showReviews = response.results.reversed()
+            errorMessage = nil
+        } catch {
+            errorMessage = "Failed to load show reviews: \(error)"
         }
     }
 }
