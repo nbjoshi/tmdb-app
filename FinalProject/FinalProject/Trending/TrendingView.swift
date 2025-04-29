@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import SwiftData
+import WidgetKit
 
 enum TrendingTab {
     case all
@@ -34,6 +36,8 @@ struct TrendingView: View {
     @State private var selectedTab: TrendingTab = .all
     @State private var selectedMedia: SelectedMedia? = nil
     @ObservedObject var profileVM: ProfileViewModel
+    @Environment(\.modelContext) private var modelContext
+    @Query private var items: [WidgetModel]
 
     var body: some View {
         NavigationStack {
@@ -87,6 +91,12 @@ struct TrendingView: View {
             }
             .task {
                 await trendingVM.getTrending(type: selectedTab.pathValue)
+                insertRandomTrendingItem()
+
+                let notifications = NotificationCenter.default.notifications(named: ModelContext.didSave)
+                for await _ in notifications {
+                    WidgetCenter.shared.reloadAllTimelines()
+                }
             }
             .refreshable {
                 await trendingVM.getTrending(type: selectedTab.pathValue)
@@ -116,6 +126,21 @@ struct TrendingView: View {
             }
         }
     }
+    private func insertRandomTrendingItem() {
+            guard !trendingVM.trending.isEmpty else { return }
+            let randomTrending = trendingVM.trending.randomElement()!
+
+            let newItem = WidgetModel(
+                id: randomTrending.id,
+                mediaType: randomTrending.mediaType,
+                posterPath: randomTrending.posterPath,
+                profilePath: randomTrending.profilePath,
+                title: randomTrending.title,
+                name: randomTrending.name
+            )
+
+            modelContext.insert(newItem)
+        }
 }
 
 // #Preview {

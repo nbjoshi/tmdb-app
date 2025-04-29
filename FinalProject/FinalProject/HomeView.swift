@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct HomeView: View {
     @State private var selectedTab = 0 // 0: Trending, 1: Favorites, 2: Search, 3: Profile
