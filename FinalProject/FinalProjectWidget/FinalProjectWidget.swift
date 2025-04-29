@@ -53,10 +53,11 @@ struct FinalProjectWidgetEntryView: View {
                     Text("No Trending Data")
                         .font(.footnote)
                         .multilineTextAlignment(.center)
+                        .foregroundStyle(.primary)
                 }
                 .padding()
                 .foregroundStyle(.white)
-                .containerBackground(.black.gradient, for: .widget)
+                .containerBackground(.blue.gradient, for: .widget)
             } else {
                 switch family {
                 case .systemSmall:
@@ -64,6 +65,7 @@ struct FinalProjectWidgetEntryView: View {
                         Text("Trending 🔥")
                             .font(.subheadline)
                             .bold()
+                            .foregroundStyle(.primary)
                         
                         Divider()
 
@@ -77,19 +79,22 @@ struct FinalProjectWidgetEntryView: View {
                                     .font(.caption)
                                     .lineLimit(1)
                                     .minimumScaleFactor(0.7)
+                                    .foregroundStyle(.primary)
+
                             }
                             Text("(\(first.mediaType))")
                                 .font(.caption2)
-                                .foregroundColor(.gray)
+                                .foregroundStyle(.secondary)
                         }
                     }
-                    .containerBackground(.black.gradient, for: .widget)
+                    .containerBackground(.blue.gradient, for: .widget)
 
                 case .systemMedium:
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Trending 🔥")
                             .font(.title2)
                             .bold()
+                            .foregroundStyle(.primary)
 
                         Divider().background(Color.white.opacity(0.6))
 
@@ -103,21 +108,23 @@ struct FinalProjectWidgetEntryView: View {
                                     .font(.callout)
                                     .lineLimit(1)
                                     .minimumScaleFactor(0.7)
+                                    .foregroundStyle(.primary)
                                 
                                 Text("(\(item.mediaType))")
                                     .font(.caption2)
-                                    .foregroundColor(.gray)
+                                    .foregroundStyle(.secondary)
                             }
                         }
                     }
                     .padding()
-                    .containerBackground(.black.gradient, for: .widget)
+                    .containerBackground(.blue.gradient, for: .widget)
 
                 default:
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Trending 🔥")
                             .font(.title)
                             .bold()
+                            .foregroundStyle(.primary)
 
                         Divider().background(Color.white.opacity(0.6))
 
@@ -131,16 +138,17 @@ struct FinalProjectWidgetEntryView: View {
                                     .font(.callout)
                                     .lineLimit(1)
                                     .minimumScaleFactor(0.7)
+                                    .foregroundStyle(.primary)
                                 
                                 Text("(\(item.mediaType))")
                                     .font(.caption2)
-                                    .foregroundColor(.gray)
+                                    .foregroundStyle(.secondary)
                             }
                         }
                         Spacer()
                     }
                     .padding()
-                    .containerBackground(.black.gradient, for: .widget)
+                    .containerBackground(.blue.gradient, for: .widget)
                 }
             }
         }
