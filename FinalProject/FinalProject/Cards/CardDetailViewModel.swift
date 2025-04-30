@@ -21,6 +21,8 @@ class CardDetailViewModel {
     var isWatchlisted: Bool = false
     var movieReviews: [Review] = []
     var showReviews: [Review] = []
+    var movieVideos: [Video] = []
+    var showVideos: [Video] = []
     
     func getMovieDetails(movieId: Int) async {
         do {
@@ -131,6 +133,20 @@ class CardDetailViewModel {
             errorMessage = nil
         } catch {
             errorMessage = "Failed to load show reviews: \(error)"
+        }
+    }
+    
+    func getVideos(mediaId: Int, mediaType: String) async {
+        do {
+            let response = try await service.getVideos(mediaId: mediaId, mediaType: mediaType)
+            if mediaType == "movie" {
+                movieVideos = response.results
+            } else {
+                showVideos = response.results
+            }
+            errorMessage = nil
+        } catch {
+            errorMessage = "Failed to load movies: \(error)"
         }
     }
 }

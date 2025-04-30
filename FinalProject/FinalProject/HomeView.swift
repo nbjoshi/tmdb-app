@@ -16,7 +16,7 @@ struct HomeView: View {
         TabView(selection: $selectedTab) {
             TrendingView(profileVM: profileVM)
                 .tabItem {
-                    Label("Trending", systemImage: "play.house.fill")
+                    Label("Home", systemImage: "play.house.fill")
                 }
                 .tag(0)
             FavoritesView(profileVM: profileVM)

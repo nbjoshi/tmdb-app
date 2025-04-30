@@ -176,7 +176,6 @@ struct TrendingView: View {
             for item in items {
                 modelContext.delete(item)
             }
-            try modelContext.save()
             print("✅ Deleted all WidgetModel entries.")
         } catch {
             print("Failed to delete WidgetModel items: \(error)")

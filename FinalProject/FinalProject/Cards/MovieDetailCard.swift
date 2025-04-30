@@ -10,6 +10,7 @@ import SwiftUI
 enum MovieTab {
     case similar
     case reviews
+    case extras
 }
 
 struct MovieDetailCard: View {
@@ -105,8 +106,19 @@ struct MovieDetailCard: View {
                                                 .fill(movieTab == .reviews ? Color.accentColor.opacity(0.2) : Color.clear)
                                         )
                                 }
+                                Button(action: { movieTab = .extras }) {
+                                    Text("Extras")
+                                        .fontWeight(.semibold)
+                                        .padding(.vertical, 8)
+                                        .padding(.horizontal, 12)
+                                        .background(
+                                            RoundedRectangle(cornerRadius: 12)
+                                                .fill(movieTab == .extras ? Color.accentColor.opacity(0.2) : Color.clear)
+                                        )
+                                }
                             }
                             .padding(.vertical)
+                            .animation(.easeInOut(duration: 0.2), value: movieTab)
                             
                             if movieTab == .similar {
                                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
@@ -151,6 +163,15 @@ struct MovieDetailCard: View {
                                     }
                                 }
                             }
+                            
+                            if movieTab == .extras {
+                                LazyVStack(alignment: .leading) {
+                                    ForEach(cardDetailVM.movieVideos) { video in
+                                        VideoView(video: video)
+                                        Divider()
+                                    }
+                                }
+                            }
                         }
                         .padding()
                     }
@@ -173,6 +194,7 @@ struct MovieDetailCard: View {
             await cardDetailVM.getSimilarMovies(movieId: trendingId)
             await cardDetailVM.getMovieState(movieId: trendingId, sessionId: sessionId)
             await cardDetailVM.getMovieReviews(movieId: trendingId)
+            await cardDetailVM.getVideos(mediaId: trendingId, mediaType: "movie")
         }
         .refreshable {
             await cardDetailVM.getMovieDetails(movieId: trendingId)

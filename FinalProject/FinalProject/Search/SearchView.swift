@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct SearchView: View {
     @State private var searchVM = SearchViewModel()
@@ -14,10 +15,12 @@ struct SearchView: View {
     @FocusState private var isTextFieldFocused: Bool
     @State private var selectedMedia: SelectedMedia? = nil
     @ObservedObject var profileVM: ProfileViewModel
+    @Environment(\.modelContext) private var modelContext
+    @Query(sort: \RecentSearch.timestamp, order: .reverse) private var recentSearches: [RecentSearch]
 
     var body: some View {
         NavigationStack {
-            VStack {
+            VStack() {
                 HStack {
                     ZStack {
                         RoundedRectangle(cornerRadius: 12)
@@ -37,6 +40,14 @@ struct SearchView: View {
                                 }
                                 .onSubmit {
                                     Task {
+                                        if searchQuery.isEmpty {
+                                            searchVM.search = []
+                                            return
+                                        }
+                                        
+                                        let recentSearch = RecentSearch(query: searchQuery)
+                                        modelContext.insert(recentSearch)
+                                        
                                         searchVM.query = searchQuery
                                         await searchVM.getSearch()
                                         hideKeyboard()
@@ -45,10 +56,12 @@ struct SearchView: View {
                         }
                         .cornerRadius(12)
                     }
+                    
                     if hasCancel && !searchQuery.isEmpty {
                         Button(action: {
                             searchQuery = ""
                             searchVM.query = searchQuery
+                            searchVM.search = []
                             hideKeyboard()
                             isTextFieldFocused = false
                         }) {
@@ -59,6 +72,39 @@ struct SearchView: View {
                     }
                 }
                 .padding()
+                
+                if searchQuery.isEmpty && searchVM.search.isEmpty {
+                    ScrollView {
+                        LazyVStack(alignment: .leading, spacing: 12) {
+                            Text("Recent Searches")
+                                .font(.headline)
+                            
+                            ForEach(recentSearches.prefix(5)) {  recent in
+                                Button(action: {
+                                    searchQuery = recent.query
+                                    Task {
+                                        searchVM.query = searchQuery
+                                        await searchVM.getSearch()
+                                        hideKeyboard()
+                                    }
+                                }) {
+                                    HStack(spacing: 6) {
+                                        Image(systemName: "clock")
+                                            .resizable()
+                                            .scaledToFit()
+                                            .frame(width: 20, height: 20)
+                                        
+                                        Text(recent.query)
+                                    }
+                                    .foregroundStyle(.secondary)
+                                }
+                            }
+                        }
+                    }
+                    .padding()
+                }
+            
+                
                 
                 ScrollView(.vertical) {
                     LazyVStack {
@@ -98,6 +144,35 @@ struct SearchView: View {
                     )
                 }
             }
+        }
+        .task {
+            print("Recent Searches on Launch: \(recentSearches.map(\.query))")
+        }
+    }
+    private func printAllItemsInSwiftData() {
+        let fetchDescriptor = FetchDescriptor<RecentSearch>()
+        do {
+            let searches = try modelContext.fetch(fetchDescriptor)
+            print("=== SwiftData Items ===")
+            for search in searches {
+                print(search.query)
+            }
+            print("=======================")
+        } catch {
+            print("Failed to fetch WidgetModel items: \(error)")
+        }
+    }
+    
+    private func deleteAllItemsInSwiftData() {
+        let fetchDescriptor = FetchDescriptor<RecentSearch>()
+        do {
+            let searches = try modelContext.fetch(fetchDescriptor)
+            for search in searches {
+                modelContext.delete(search)
+            }
+            print("✅ Deleted all WidgetModel entries.")
+        } catch {
+            print("Failed to delete WidgetModel items: \(error)")
         }
     }
 }

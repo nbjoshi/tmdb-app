@@ -11,6 +11,7 @@ enum ShowTab {
     case episodes
     case similar
     case reviews
+    case extras
 }
 
 struct ShowDetailCard: View {
@@ -86,36 +87,48 @@ struct ShowDetailCard: View {
                             }
                             Divider()
                             
-                            HStack(spacing: 10) {
-                                Button(action: { showTab = .episodes }) {
-                                    Text("Episodes")
-                                        .fontWeight(.semibold)
-                                        .padding(.vertical, 8)
-                                        .padding(.horizontal, 12)
-                                        .background(
-                                            RoundedRectangle(cornerRadius: 12)
-                                                .fill(showTab == .episodes ? Color.accentColor.opacity(0.2) : Color.clear)
-                                        )
-                                }
-                                Button(action: { showTab = .similar }) {
-                                    Text("You May Also Like")
-                                        .fontWeight(.semibold)
-                                        .padding(.vertical, 8)
-                                        .padding(.horizontal, 12)
-                                        .background(
-                                            RoundedRectangle(cornerRadius: 12)
-                                                .fill(showTab == .similar ? Color.accentColor.opacity(0.2) : Color.clear)
-                                        )
-                                }
-                                Button(action: { showTab = .reviews }) {
-                                    Text("Reviews")
-                                        .fontWeight(.semibold)
-                                        .padding(.vertical, 8)
-                                        .padding(.horizontal, 12)
-                                        .background(
-                                            RoundedRectangle(cornerRadius: 12)
-                                                .fill(showTab == .reviews ? Color.accentColor.opacity(0.2) : Color.clear)
-                                        )
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                HStack(spacing: 10) {
+                                    Button(action: { showTab = .episodes }) {
+                                        Text("Episodes")
+                                            .fontWeight(.semibold)
+                                            .padding(.vertical, 8)
+                                            .padding(.horizontal, 12)
+                                            .background(
+                                                RoundedRectangle(cornerRadius: 12)
+                                                    .fill(showTab == .episodes ? Color.accentColor.opacity(0.2) : Color.clear)
+                                            )
+                                    }
+                                    Button(action: { showTab = .similar }) {
+                                        Text("Similar")
+                                            .fontWeight(.semibold)
+                                            .padding(.vertical, 8)
+                                            .padding(.horizontal, 12)
+                                            .background(
+                                                RoundedRectangle(cornerRadius: 12)
+                                                    .fill(showTab == .similar ? Color.accentColor.opacity(0.2) : Color.clear)
+                                            )
+                                    }
+                                    Button(action: { showTab = .reviews }) {
+                                        Text("Reviews")
+                                            .fontWeight(.semibold)
+                                            .padding(.vertical, 8)
+                                            .padding(.horizontal, 12)
+                                            .background(
+                                                RoundedRectangle(cornerRadius: 12)
+                                                    .fill(showTab == .reviews ? Color.accentColor.opacity(0.2) : Color.clear)
+                                            )
+                                    }
+                                    Button(action: { showTab = .extras }) {
+                                        Text("Extras")
+                                            .fontWeight(.semibold)
+                                            .padding(.vertical, 8)
+                                            .padding(.horizontal, 12)
+                                            .background(
+                                                RoundedRectangle(cornerRadius: 12)
+                                                    .fill(showTab == .extras ? Color.accentColor.opacity(0.2) : Color.clear)
+                                            )
+                                    }
                                 }
                             }
                             .padding(.vertical)
@@ -226,6 +239,15 @@ struct ShowDetailCard: View {
                                     }
                                 }
                             }
+                            
+                            if showTab == .extras {
+                                LazyVStack(alignment: .leading) {
+                                    ForEach(cardDetailVM.showVideos) { video in
+                                        VideoView(video: video)
+                                        Divider()
+                                    }
+                                }
+                            }
                         }
                         .padding()
                         
@@ -253,6 +275,7 @@ struct ShowDetailCard: View {
             await cardDetailVM.getSimilarShows(showId: trendingId)
             await cardDetailVM.getShowState(showId: trendingId, sessionId: sessionId)
             await cardDetailVM.getShowReviews(showId: trendingId)
+            await cardDetailVM.getVideos(mediaId: trendingId, mediaType: "tv")
             if let firstSeason = cardDetailVM.showDetails?.seasons.first {
                 selectedSeason = firstSeason
                 await cardDetailVM.getSeasonDetails(showId: trendingId, seasonNumber: firstSeason.seasonNumber)

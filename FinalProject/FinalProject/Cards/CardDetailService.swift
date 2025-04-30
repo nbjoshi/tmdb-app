@@ -148,8 +148,6 @@ class CardDetailService {
     }
     
     func markAsFavorite(accountId: Int, sessionId: String, mediaType: String, mediaId: Int, favorite: Bool) async throws -> FavoritesResponse {
-        print("mediaType: \(mediaType)")
-        
         let parameters = [
             "media_type": mediaType,
             "media_id": mediaId,
@@ -246,7 +244,7 @@ class CardDetailService {
     
     func markAsWatchlist(accountId: Int, sessionId: String, mediaType: String, mediaId: Int, watchlist: Bool) async throws -> WatchlistResponse {
         let parameters = [
-            "media_type": "tv",
+            "media_type": mediaType,
             "media_id": mediaId,
             "watchlist": watchlist,
         ] as [String: Any?]
@@ -334,6 +332,34 @@ class CardDetailService {
         do {
             let (data, _) = try await URLSession.shared.data(for: request)
             let response: ReviewResponse = try JSONDecoder().decode(ReviewResponse.self, from: data)
+            return response
+        } catch {
+            throw error
+        }
+    }
+    
+    func getVideos(mediaId: Int, mediaType: String) async throws -> VideoResponse {
+        guard let url = URL(string: "https://api.themoviedb.org/3/\(mediaType)/\(mediaId)/videos") else {
+            throw URLError(.badURL)
+        }
+        
+        var components = URLComponents(url: url, resolvingAgainstBaseURL: true)!
+        let queryItems: [URLQueryItem] = [
+          URLQueryItem(name: "language", value: "en-US"),
+        ]
+        components.queryItems = components.queryItems.map { $0 + queryItems } ?? queryItems
+
+        var request = URLRequest(url: components.url!)
+        request.httpMethod = "GET"
+        request.timeoutInterval = 10
+        request.allHTTPHeaderFields = [
+          "accept": "application/json",
+          "Authorization": "Bearer \(Constants.access_token)",
+        ]
+
+        do {
+            let (data, _) = try await URLSession.shared.data(for: request)
+            let response: VideoResponse = try JSONDecoder().decode(VideoResponse.self, from: data)
             return response
         } catch {
             throw error
