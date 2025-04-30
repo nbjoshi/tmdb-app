@@ -7,8 +7,9 @@ TMDB Companion is a Swift-based iOS application designed to help users explore, 
 This app is built for movie and TV show enthusiasts who want a sleek, focused way to track what they watch, discover new content, and manage their favorites, all powered by a real user account from TMDB.
 ## Features
 
-![IMG_5086](https://github.com/user-attachments/assets/fc1aee74-2869-4513-899f-ed6ccafe08fa)
-![IMG_5088](https://github.com/user-attachments/assets/98916ad4-f5fb-4c33-8807-b602588c8eb9)
+<img src="https://github.com/user-attachments/assets/fc1aee74-2869-4513-899f-ed6ccafe08fa" width="250" />
+<img src="https://github.com/user-attachments/assets/c8424cf9-05f5-4a0e-96c2-cbd09af73097" width="250" />
+<img src="https://github.com/user-attachments/assets/98916ad4-f5fb-4c33-8807-b602588c8eb9" width="250" />
 
 Trending Feed: Browse trending movies and TV shows in real time.
 
