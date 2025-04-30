@@ -51,5 +51,5 @@ Guest Sessions: Support anonymous usage through TMDB guest sessions so users can
 
 UI Refresh: Redesign key views and navigation to give the app a more distinct look and feel, moving away from uniform styling to a more branded and visually diverse interface.
 
-🧼 Codebase Refinement: Refactor the architecture to improve modularity, reusability, and maintainability, while also adopting SwiftUI best practices throughout the project.
+Codebase Refinement: Refactor the architecture to improve modularity, reusability, and maintainability, while also adopting SwiftUI best practices throughout the project.
 
