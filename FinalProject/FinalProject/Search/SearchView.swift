@@ -39,18 +39,19 @@ struct SearchView: View {
                                     hasCancel = newValue
                                 }
                                 .onSubmit {
+                                    if searchQuery.isEmpty {
+                                        searchVM.search = []
+                                        return
+                                    }
+                                    
+                                    let recentSearch = RecentSearch(query: searchQuery)
+                                    modelContext.insert(recentSearch)
+                                    
+                                    searchVM.query = searchQuery
+                                    hideKeyboard()
+                                    
                                     Task {
-                                        if searchQuery.isEmpty {
-                                            searchVM.search = []
-                                            return
-                                        }
-                                        
-                                        let recentSearch = RecentSearch(query: searchQuery)
-                                        modelContext.insert(recentSearch)
-                                        
-                                        searchVM.query = searchQuery
                                         await searchVM.getSearch()
-                                        hideKeyboard()
                                     }
                                 }
                         }
@@ -101,7 +102,7 @@ struct SearchView: View {
                             }
                         }
                     }
-                    .padding()
+                    .padding(.horizontal)
                 }
             
                 ScrollView(.vertical) {
@@ -145,6 +146,7 @@ struct SearchView: View {
         }
         .task {
             print("Recent Searches on Launch: \(recentSearches.map(\.query))")
+            printAllItemsInSwiftData()
         }
     }
 

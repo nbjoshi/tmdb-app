@@ -45,6 +45,7 @@ struct HomeView: View {
             if let savedSessionId = profileVM.session {
                 await profileVM.getProfile(sessionId: savedSessionId)
             }
+            print("GG")
         }
     }
 }
