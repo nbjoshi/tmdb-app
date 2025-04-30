@@ -5,8 +5,8 @@
 //  Created by Neel Joshi on 4/17/25.
 //
 
-import SwiftUI
 import SwiftData
+import SwiftUI
 
 struct SearchView: View {
     @State private var searchVM = SearchViewModel()
@@ -20,7 +20,7 @@ struct SearchView: View {
 
     var body: some View {
         NavigationStack {
-            VStack() {
+            VStack {
                 HStack {
                     ZStack {
                         RoundedRectangle(cornerRadius: 12)
@@ -79,7 +79,7 @@ struct SearchView: View {
                             Text("Recent Searches")
                                 .font(.headline)
                             
-                            ForEach(recentSearches.prefix(5)) {  recent in
+                            ForEach(recentSearches.prefix(5)) { recent in
                                 Button(action: {
                                     searchQuery = recent.query
                                     Task {
@@ -104,8 +104,6 @@ struct SearchView: View {
                     .padding()
                 }
             
-                
-                
                 ScrollView(.vertical) {
                     LazyVStack {
                         ForEach(searchVM.search) { result in
@@ -149,6 +147,7 @@ struct SearchView: View {
             print("Recent Searches on Launch: \(recentSearches.map(\.query))")
         }
     }
+
     private func printAllItemsInSwiftData() {
         let fetchDescriptor = FetchDescriptor<RecentSearch>()
         do {

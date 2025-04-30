@@ -345,7 +345,7 @@ class CardDetailService {
         
         var components = URLComponents(url: url, resolvingAgainstBaseURL: true)!
         let queryItems: [URLQueryItem] = [
-          URLQueryItem(name: "language", value: "en-US"),
+            URLQueryItem(name: "language", value: "en-US"),
         ]
         components.queryItems = components.queryItems.map { $0 + queryItems } ?? queryItems
 
@@ -353,8 +353,8 @@ class CardDetailService {
         request.httpMethod = "GET"
         request.timeoutInterval = 10
         request.allHTTPHeaderFields = [
-          "accept": "application/json",
-          "Authorization": "Bearer \(Constants.access_token)",
+            "accept": "application/json",
+            "Authorization": "Bearer \(Constants.access_token)",
         ]
 
         do {
