@@ -26,10 +26,11 @@ struct ProfileView: View {
                                 .aspectRatio(contentMode: .fill)
                                 .frame(width: 100, height: 100)
                                 .clipShape(Circle())
-                                .overlay(Circle().stroke(Color.accentColor, lineWidth: 3))
                         } placeholder: {
                             ProgressView()
                         }
+                        .navigationTitle("PROFILE")
+                        .navigationBarTitleDisplayMode(.inline)
                     } else {
                         Image(systemName: "person.crop.circle.fill")
                             .resizable()
@@ -37,7 +38,7 @@ struct ProfileView: View {
                             .foregroundColor(.gray)
                     }
                                 
-                    Text("Welcome, \(profile.name)!")
+                    Text(profile.name)
                         .font(.title)
                         .fontWeight(.semibold)
                         .multilineTextAlignment(.center)
@@ -98,6 +99,8 @@ struct ProfileView: View {
                         }
                     }
                 }
+                .navigationTitle("LOG IN")
+                .navigationBarTitleDisplayMode(.inline)
             }
         }
     }

@@ -16,27 +16,27 @@ struct HomeView: View {
         TabView(selection: $selectedTab) {
             TrendingView(profileVM: profileVM)
                 .tabItem {
-                    Label("Home", systemImage: "play.house.fill")
+                    Label("HOME", systemImage: "play.house.fill")
                 }
                 .tag(0)
             FavoritesView(profileVM: profileVM)
                 .tabItem {
-                    Label("Favorites", systemImage: "star.fill")
+                    Label("FAVORITES", systemImage: "star.fill")
                 }
                 .tag(1)
             WatchlistView(profileVM: profileVM)
                 .tabItem {
-                    Label("Watchlist", systemImage: "tv.fill")
+                    Label("WATCHLIST", systemImage: "tv.fill")
                 }
                 .tag(2)
             SearchView(profileVM: profileVM)
                 .tabItem {
-                    Label("Search", systemImage: "magnifyingglass")
+                    Label("SEARCH", systemImage: "magnifyingglass")
                 }
                 .tag(3)
             ProfileView(profileVM: profileVM)
                 .tabItem {
-                    Label("Profile", systemImage: "person.crop.circle.fill")
+                    Label("PROFILE", systemImage: "person.crop.circle.fill")
                 }
                 .tag(4)
         }
