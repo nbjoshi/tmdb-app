@@ -96,6 +96,17 @@ struct SearchView: View {
                                             .frame(width: 20, height: 20)
                                         
                                         Text(recent.query)
+                                        
+                                        Spacer()
+                                        
+                                        Button(action: {
+                                            modelContext.delete(recent)
+                                        }) {
+                                            Image(systemName: "x.circle")
+                                                .resizable()
+                                                .scaledToFit()
+                                                .frame(width: 20, height: 20)
+                                        }
                                     }
                                     .foregroundStyle(.secondary)
                                 }
@@ -104,7 +115,7 @@ struct SearchView: View {
                     }
                     .padding(.horizontal)
                 }
-            
+                
                 ScrollView(.vertical) {
                     LazyVStack {
                         ForEach(searchVM.search) { result in
@@ -143,24 +154,6 @@ struct SearchView: View {
                     )
                 }
             }
-        }
-        .task {
-            print("Recent Searches on Launch: \(recentSearches.map(\.query))")
-            printAllItemsInSwiftData()
-        }
-    }
-
-    private func printAllItemsInSwiftData() {
-        let fetchDescriptor = FetchDescriptor<RecentSearch>()
-        do {
-            let searches = try modelContext.fetch(fetchDescriptor)
-            print("=== SwiftData Items ===")
-            for search in searches {
-                print(search.query)
-            }
-            print("=======================")
-        } catch {
-            print("Failed to fetch WidgetModel items: \(error)")
         }
     }
     
