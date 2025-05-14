@@ -26,11 +26,6 @@ enum TrendingTab {
     }
 }
 
-struct SelectedMedia: Identifiable {
-    var id: Int
-    var mediaType: String
-}
-
 struct TrendingView: View {
     @State private var trendingVM = TrendingViewModel()
     @State private var selectedTab: TrendingTab = .all

@@ -132,7 +132,6 @@ struct SearchView: View {
                     }
                 }
             }
-            // Used AI for this!
             .onTapGesture {
                 hideKeyboard()
             }
@@ -171,14 +170,8 @@ struct SearchView: View {
     }
 }
 
-// Used AI for this!
 extension View {
     func hideKeyboard() {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
 }
-
-//
-// #Preview {
-//    SearchView()
-// }

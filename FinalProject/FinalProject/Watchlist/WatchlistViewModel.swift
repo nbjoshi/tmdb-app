@@ -12,31 +12,20 @@ import Observation
 class WatchlistViewModel {
     private let service = WatchlistService()
     var errorMessage: String? = nil
-    var watchlistMovies: [WatchlistMovie] = []
-    var watchlistShows: [WatchlistShow] = []
+    var watchlistMovies: [Media] = []
+    var watchlistShows: [Media] = []
     
-    func getWatchlistMovies(accountId: Int, sessionId: String) async {
+    func getWatchlist(accountId: Int, sessionId: String, mediaType: String) async {
         do {
-            let response = try await service.getWatchlistMovies(accountId: accountId, sessionId: sessionId)
-            if let movies = response.results {
-                watchlistMovies = movies
-            }
+            let response = try await service.getWatchlist(accountId: accountId, sessionId: sessionId, mediaType: mediaType)
             errorMessage = nil
-        } catch {
-            errorMessage = "Couldn't retrieve watchlisted movies"
-        }
-    }
-    
-    func getWatchlistShows(accountId: Int, sessionId: String) async {
-        do {
-            let response = try await service.getWatchlistShows(accountId: accountId, sessionId: sessionId)
-            print(response)
-            if let shows = response.results {
-                watchlistShows = shows
+            if mediaType == "movie" {
+                watchlistMovies = response.results ?? []
+            } else {
+                watchlistShows = response.results ?? []
             }
-            errorMessage = nil
         } catch {
-            errorMessage = "Couldn't retrieve watchlisted shows"
+            errorMessage = "Couldn't retrieve watchlisted \(mediaType)"
         }
     }
 }

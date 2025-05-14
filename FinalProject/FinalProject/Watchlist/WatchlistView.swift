@@ -46,29 +46,32 @@ struct WatchlistView: View {
                     }
                     .padding()
                     .animation(.easeInOut(duration: 0.2), value: selectedTab)
-
+                    
                     ScrollView(.vertical) {
-                        LazyVStack {
-                            if selectedTab == .movie {
+                        if selectedTab == .movie {
+                            LazyVStack {
                                 ForEach(watchlistVM.watchlistMovies) { movie in
-                                    WatchlistCardView(title: movie.title, posterPath: movie.posterPath)
+                                    WatchlistCardView(title: movie.displayName, posterPath: movie.posterPath ?? "")
                                         .onTapGesture {
                                             selectedMedia = SelectedMedia(id: movie.id, mediaType: "movie")
                                         }
                                     Divider()
                                 }
-                            } else {
+                            }
+                        } else {
+                            LazyVStack {
                                 ForEach(watchlistVM.watchlistShows) { show in
-                                    WatchlistCardView(title: show.name, posterPath: show.posterPath)
+                                    WatchlistCardView(title: show.displayName, posterPath: show.posterPath ?? "")
                                         .onTapGesture {
                                             selectedMedia = SelectedMedia(id: show.id, mediaType: "tv")
                                         }
                                     Divider()
                                 }
                             }
+                            .padding(.horizontal)
                         }
-                        .padding(.horizontal)
                     }
+                    
                     .overlay {
                         if selectedTab == .movie && watchlistVM.watchlistMovies.isEmpty {
                             VStack {
@@ -106,33 +109,33 @@ struct WatchlistView: View {
             }
             .task {
                 if selectedTab == .movie {
-                    await watchlistVM.getWatchlistMovies(accountId: profileVM.profile?.id ?? 0, sessionId: profileVM.session ?? "")
+                    await watchlistVM.getWatchlist(accountId: profileVM.profile?.id ?? 0, sessionId: profileVM.session ?? "", mediaType: "movie")
                 } else {
-                    await watchlistVM.getWatchlistShows(accountId: profileVM.profile?.id ?? 0, sessionId: profileVM.session ?? "")
+                    await watchlistVM.getWatchlist(accountId: profileVM.profile?.id ?? 0, sessionId: profileVM.session ?? "", mediaType: "tv")
                 }
             }
             .onAppear {
                 Task {
                     if selectedTab == .movie {
-                        await watchlistVM.getWatchlistMovies(accountId: profileVM.profile?.id ?? 0, sessionId: profileVM.session ?? "")
+                        await watchlistVM.getWatchlist(accountId: profileVM.profile?.id ?? 0, sessionId: profileVM.session ?? "", mediaType: "movie")
                     } else {
-                        await watchlistVM.getWatchlistShows(accountId: profileVM.profile?.id ?? 0, sessionId: profileVM.session ?? "")
+                        await watchlistVM.getWatchlist(accountId: profileVM.profile?.id ?? 0, sessionId: profileVM.session ?? "", mediaType: "tv")
                     }
                 }
             }
             .refreshable {
                 if selectedTab == .movie {
-                    await watchlistVM.getWatchlistMovies(accountId: profileVM.profile?.id ?? 0, sessionId: profileVM.session ?? "")
+                    await watchlistVM.getWatchlist(accountId: profileVM.profile?.id ?? 0, sessionId: profileVM.session ?? "", mediaType: "movie")
                 } else {
-                    await watchlistVM.getWatchlistShows(accountId: profileVM.profile?.id ?? 0, sessionId: profileVM.session ?? "")
+                    await watchlistVM.getWatchlist(accountId: profileVM.profile?.id ?? 0, sessionId: profileVM.session ?? "", mediaType: "tv")
                 }
             }
             .onChange(of: selectedTab) { oldTab, newTab in
                 Task {
                     if newTab == .movie {
-                        await watchlistVM.getWatchlistMovies(accountId: profileVM.profile?.id ?? 0, sessionId: profileVM.session ?? "")
+                        await watchlistVM.getWatchlist(accountId: profileVM.profile?.id ?? 0, sessionId: profileVM.session ?? "", mediaType: "movie")
                     } else {
-                        await watchlistVM.getWatchlistShows(accountId: profileVM.profile?.id ?? 0, sessionId: profileVM.session ?? "")
+                        await watchlistVM.getWatchlist(accountId: profileVM.profile?.id ?? 0, sessionId: profileVM.session ?? "", mediaType: "tv")
                     }
                 }
             }
@@ -181,7 +184,3 @@ struct WatchlistView: View {
         }
     }
 }
-
-// #Preview {
-//    WatchlistView()
-// }
